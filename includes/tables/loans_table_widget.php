@@ -128,9 +128,7 @@
                         </td>
                     </tr>
                 <?php endforeach; ?>
-
-
-
+            
             </tbody>
 		</table>
 <!--         Pagination links-->

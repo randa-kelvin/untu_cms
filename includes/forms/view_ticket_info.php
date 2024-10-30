@@ -331,6 +331,14 @@
                             $loan_id = $_GET['loan_id'];
                             include('../includes/forms/view_assessment_files.php');?>
                         </div>
+
+                        <br><br>
+                        <b>Appraisal File by Loan Officer</b>
+                        <div class="row">
+                            <?php
+                            $loan_id = $_GET['loan_id'];
+                            include('../includes/forms/view_appraisal_file.php');?>
+                        </div>
                     </div>
 
                     <div class="tab-pane fade" id="assign_task" role="tabpanel">
