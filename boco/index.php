@@ -41,7 +41,7 @@ include ('check_role.php');
 
                 <?php include('../includes/dashboard/cms_loans_graph.php'); ?>
 
-                <?php include('../includes/tables/loans_table_widget.php'); ?>
+<!--                --><?php //include('../includes/tables/loans_table_widget.php'); ?>
 
 				<?php include('../includes/footer.php');?>
 			</div>

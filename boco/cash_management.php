@@ -114,7 +114,7 @@ include('../includes/header.php');
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#pending_transaction" role="tab"
-                                   aria-selected="false">Pending Transaction Voucher</a>
+                                   aria-selected="false">Pending Trans Voucher</a>
                             </li>
                             <?php if ($_SESSION['branch'] == "Head Office"): ?>
                                 <li class="nav-item">
@@ -160,6 +160,7 @@ include('../includes/header.php');
                                     include('../includes/tables/cash_management/boco_cash_withdrawal_vouchers_table.php'); ?>
                                 </div>
                             </div>
+
                             <div class="tab-pane fade row" id="revise_transaction" role="tabpanel">
                                 <div class="pd-20">
                                     <?php $firstApprovalStatus = "REVISE";

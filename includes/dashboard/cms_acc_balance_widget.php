@@ -27,10 +27,12 @@
 
         // Pass $acc_names directly to the function without encoding it
         $vaults = pastel_acc_balances($acc_names);
+//        echo "\n#############";
 //        echo $vaults;
 
 //        echo "before foreac";
-    foreach (json_decode($vaults) as $vault) {
+    foreach (json_decode($vaults) as $index => $vault) {
+//        echo "Processing Vault $index: " . json_encode($vault) . "\n";
         ?>
         <div class="col-xl-4 mb-30">
             <div class="card-box height-100-p widget-style1">
@@ -44,7 +46,7 @@
                     <div class="weight-600 font-16">Available Bal : <?php echo '$ ' . number_format($vault->balance, 2, '.', ','); ?></div>
                     <div class="progress mb-20">
                         <?php
-                        $percentage = ($vault->balance / $vault->maxAmount) * 100;
+                        $percentage = ($vault->maxAmount > 0) ? ($vault->balance / $vault->maxAmount) * 100 : 0;
                         if ($percentage <= 60) {
                             $color = 'bg-success';
                         } elseif ($percentage > 60 && $percentage <= 80) {
@@ -71,6 +73,7 @@
         <?php
     }
     ?>
+
 
 
 </div>
