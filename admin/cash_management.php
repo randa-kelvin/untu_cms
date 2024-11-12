@@ -292,9 +292,9 @@ include('../includes/header.php');
                     <h5 class="h4 text-blue mb-20">Cash Management</h5>
                     <div class="tab">
                         <ul class="nav nav-tabs customtab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab" aria-selected="true">Account Balances</a>
-                            </li>
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab" aria-selected="true">Account Balances</a>-->
+<!--                            </li>-->
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#assign_role" role="tab" aria-selected="false">Assign CMS Role</a>
                             </li>
@@ -327,7 +327,7 @@ include('../includes/header.php');
                         <div class="tab-content">
                             <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">
                                 <div class="pd-20">
-                                    <?php include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
+<!--                                    --><?php //include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
                                 </div>
                             </div>
                             <div class="tab-pane fade row" id="assign_role" role="tabpanel">
