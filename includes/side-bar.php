@@ -525,6 +525,7 @@
                                 <ul class="submenu">
                                     <li><a href="cash_management.php?menu=main">Transactions</a></li>
                                     <li><a href="cash_management.php?menu=acc_bal">Account Balances</a></li>
+                                    <li><a href="cash_management.php?menu=reports">Audit Reports</a></li>
                                 </ul>
                             </li>
                             <li class="dropdown">
