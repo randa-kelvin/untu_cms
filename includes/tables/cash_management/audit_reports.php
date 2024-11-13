@@ -18,7 +18,7 @@
         <table class="table hover table stripe multiple-select-row data-table-export nowrap">
             <thead class="small">
             <tr>
-                <th>Application Date</th>
+                <th>Transaction Date</th>
                 <th>Reference No</th>
                 <th>Processed By</th>
                 <th>First Approver</th>
@@ -38,7 +38,7 @@
             foreach ($voucher as $row):?>
                 <tr>
                     <td>
-                        <?= htmlspecialchars((new DateTime($row["applicationDate"]))->format('d F, Y')) ?>
+                        <?= htmlspecialchars((new DateTime($row["applicationDate"]))->format('Y-m-d')) ?>
                     </td>
 
                     <td><?= htmlspecialchars($row["reference"]) ?></td>

@@ -104,10 +104,10 @@ include('../includes/header.php');
             <div class="row align-items-center">
                 <!--                        <iframe class="card-body" title="credit_loans" width="1140" height="515" src="https://app.powerbi.com/reportEmbed?reportId=de0def08-11a1-48a7-84de-6a985f030144&autoAuth=true&ctid=66d250cc-d4c9-4aa7-beec-9a10acf3be25" frameborder="0" allowFullScreen="true"></iframe>-->
                 <iframe
-                        src="http://13.246.85.3:3000/dashboard/2-loan-application-data-analytics"
+                        src="http://13.246.85.3:3000/public/dashboard/2406a467-844a-4ced-82ae-0fb9439a3ec0"
                         frameborder="0"
                         width=100%
-                        height=1800
+                        height=2300
                         allowtransparency
                 ></iframe>
             </div>
