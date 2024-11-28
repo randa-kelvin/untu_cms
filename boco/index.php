@@ -5,8 +5,8 @@ include ('check_role.php');
 	$nav_header = "Dashboard";
     include('../includes/controllers.php');
 //    $url = '/byBranch/'.$_SESSION['branch'];
-    $url = '/unchecked/PENDING/'.$_SESSION['branch'];
-    $caseloads = 'caseloadsByBranch/'.$_SESSION['branch'];
+//    $url = '/unchecked/PENDING/'.$_SESSION['branch'];
+//    $caseloads = 'caseloadsByBranch/'.$_SESSION['branch'];
 
 ?>
 
@@ -41,7 +41,7 @@ include ('check_role.php');
 
                 <?php include('../includes/dashboard/cms_loans_graph.php'); ?>
 
-                <?php include('../includes/tables/loans_table_widget.php'); ?>
+<!--                --><?php //include('../includes/tables/loans_table_widget.php'); ?>
 
 				<?php include('../includes/footer.php');?>
 			</div>

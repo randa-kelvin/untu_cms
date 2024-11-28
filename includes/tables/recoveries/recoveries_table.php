@@ -28,7 +28,7 @@
             </thead>
             <tbody>
             <?php
-            $petty_cash = cms_petty_cash_payments();
+            $petty_cash = musoni_recoveries();
             foreach($petty_cash as $petty):
                 $user = user($petty["userid"]);
                  ?>
@@ -62,11 +62,6 @@
                             <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                                 <a class="dropdown-item" href="recovery_info.php"><i class="dw dw-eye"></i> View</a>
 
-
-                                <!--                                <form method="post" action="">-->
-<!--                                    <input class="form-control" type="hidden" name="id" required value="--><?php //echo $petty['id'] ?><!--">-->
-<!--                                    <button class="dropdown-item" type="submit" name="revoke_permission" ><i class="dw dw-delete-3"></i> Approve </button>-->
-<!--                                </form>-->
                             </div>
                         </div>
                     </td>

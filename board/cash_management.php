@@ -67,12 +67,16 @@ include('../includes/header.php');
                                    aria-selected="false">Pending Transactions Vouchers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#approved" role="tab"
-                                   aria-selected="false">Approved Transactions Vouchers</a>
-                            </li>
-                            <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#revise" role="tab"
                                    aria-selected="false">Revise Transactions Vouchers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#declined" role="tab"
+                                   aria-selected="false">Declined Transactions Vouchers</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#approved" role="tab"
+                                   aria-selected="false">Approved Transactions Vouchers</a>
                             </li>
                         </ul>
                         <div class="tab-content">
@@ -81,15 +85,21 @@ include('../includes/header.php');
                                     <?php include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
                                 </div>
                             </div>
-
-                            <div class="tab-pane fade row" id="pending" role="tabpanel">
-                                <?php $approvalStatus = "PENDING"; include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
+                            <div class="tab-pane fade" id="pending" role="tabpanel">
+                                <?php $titleStatus="Pending"; $approvalStatus = "PENDING";
+                                include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
                             </div>
                             <div class="tab-pane fade" id="approved" role="tabpanel">
-                                <?php $approvalStatus = "APPROVED"; include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
+                                <?php $titleStatus="Approved"; $approvalStatus = "APPROVED";
+                                include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
                             </div>
                             <div class="tab-pane fade" id="revise" role="tabpanel">
-                                <?php $approvalStatus = "REVISE"; include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
+                                <?php $titleStatus="Revise"; $approvalStatus = "REVISE";
+                                include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
+                            </div>
+                            <div class="tab-pane fade" id="declined" role="tabpanel">
+                                <?php $titleStatus="Declined"; $approvalStatus = "DECLINED";
+                                include('../includes/tables/cash_management/board_transaction_vouchers.php'); ?>
                             </div>
 
                         </div>
@@ -98,7 +108,60 @@ include('../includes/header.php');
             </div>
 
 
-        <?php } ?>
+        <?php }
+        elseif ($_GET['menu'] == "acc_bal") {?>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('success')) {
+                        // Display a popup or alert message
+                        alert('Deleted successfully');
+                    }
+                });
+            </script>
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-30">
+                <div class="pd-20 card-box">
+                    <h5 class="h4 text-blue mb-20">Cash Management</h5>
+                    <div class="tab">
+                        <ul class="nav nav-tabs customtab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab" aria-selected="true">Account Balances</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">
+                                <div class="pd-20">
+                                    <?php include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php }
+        elseif ($_GET['menu'] == "reports") {?>
+            <div class="col-lg-12 col-md-12 col-sm-12 mb-30">
+                <div class="pd-20 card-box">
+                    <h5 class="h4 text-blue mb-20">Cash Management</h5>
+                    <div class="tab">
+                        <ul class="nav nav-tabs customtab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#reports" role="tab" aria-selected="true">Audit Report</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="reports" role="tabpanel">
+                                <div class="pd-20">
+                                    <?php include('../includes/tables/cash_management/audit_reports.php'); ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php }?>
 
         <?php include('../includes/footer.php'); ?>
     </div>
