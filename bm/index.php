@@ -4,22 +4,24 @@ include ('check_role.php');
 //	include('charts_data.php');
 	$nav_header = "Dashboard";
 	include('../includes/controllers.php');
-    $fromGraphDate = date('Y-m-d');
-    $fromDate = date('Y-m-d');
-    $toDate = date('Y-m-d');
-    if (isset($_POST['pick_range'])) {
-        // Check if the form is submitted
-        if (isset($_POST['date_range']) && !empty($_POST['date_range'])) {
-            // Get the selected date range from the form
-            list($fromDate, $toDate) = explode(' - ', $_POST['date_range']);
-            // Convert the dates to the desired format
-            $fromDate = date('Y-m-d', strtotime($fromDate));
-            $toDate = date('Y-m-d', strtotime($toDate));
-        }
-    }
-$disbursement_data = disbursed_by_range($_SESSION['branch'].'/'.$fromGraphDate.'/'.$toDate);
-$target_data = [1100000, 1200000, 1400000, 1100000, 1350000, 1200000, 1300000, 1100000, 1500000, 1200000, 1800000, 2000000];
-$disbursement_rate = round((array_sum($disbursement_data)/array_sum(array_slice($target_data, 0, count($disbursement_data))))*100, 0);
+
+//
+//    $fromGraphDate = date('Y-m-d');
+//    $fromDate = date('Y-m-d');
+//    $toDate = date('Y-m-d');
+//    if (isset($_POST['pick_range'])) {
+//        // Check if the form is submitted
+//        if (isset($_POST['date_range']) && !empty($_POST['date_range'])) {
+//            // Get the selected date range from the form
+//            list($fromDate, $toDate) = explode(' - ', $_POST['date_range']);
+//            // Convert the dates to the desired format
+//            $fromDate = date('Y-m-d', strtotime($fromDate));
+//            $toDate = date('Y-m-d', strtotime($toDate));
+//        }
+//    }
+//$disbursement_data = disbursed_by_range($_SESSION['branch'].'/'.$fromGraphDate.'/'.$toDate);
+//$target_data = [1100000, 1200000, 1400000, 1100000, 1350000, 1200000, 1300000, 1100000, 1500000, 1200000, 1800000, 2000000];
+//$disbursement_rate = round((array_sum($disbursement_data)/array_sum(array_slice($target_data, 0, count($disbursement_data))))*100, 0);
 ?>
 
 <!DOCTYPE html>

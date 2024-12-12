@@ -5,42 +5,40 @@ include ('check_role.php');
 	$nav_header = "Dashboard";
 	include('../includes/controllers.php');
 
-    $fromGraphDate = date('Y-m-d');
-    $fromDate = date('Y-m-d');
-    $toDate = date('Y-m-d');
-    if (isset($_POST['pick_range'])) {
-        // Check if the form is submitted
-        if (isset($_POST['date_range']) && !empty($_POST['date_range'])) {
-            // Get the selected date range from the form
-            list($fromDate, $toDate) = explode(' - ', $_POST['date_range']);
-            // Convert the dates to the desired format
-            $fromDate = date('Y-m-d', strtotime($fromDate));
-            $toDate = date('Y-m-d', strtotime($toDate));
-        }
-    }
-//    if (date('Y-m-d') != $fromDate){
-//        $fromGraphDate = $fromDate;
+//    $fromGraphDate = date('Y-m-d');
+//    $fromDate = date('Y-m-d');
+//    $toDate = date('Y-m-d');
+//    if (isset($_POST['pick_range'])) {
+//        // Check if the form is submitted
+//        if (isset($_POST['date_range']) && !empty($_POST['date_range'])) {
+//            // Get the selected date range from the form
+//            list($fromDate, $toDate) = explode(' - ', $_POST['date_range']);
+//            // Convert the dates to the desired format
+//            $fromDate = date('Y-m-d', strtotime($fromDate));
+//            $toDate = date('Y-m-d', strtotime($toDate));
+//        }
 //    }
-$data = disbursed_by_range($fromGraphDate.'/'.$toDate);
-$disbursement = $data['disbursedLoanMonths'];
-$disbursement_data = [];
-
-foreach ($disbursement as $disburse_data) {
-    $disbursement_data[] = $disburse_data['totalPrincipalDisbursed'];
-}
-
-// Check if $disbursement_data is empty
-if (empty($disbursement_data)) {
-    // Handle the case where there is no data (e.g., display a message)
-    $disbursement_data = disbursed_by_range($fromGraphDate.'/'.$toDate);
-    // echo "No data available.";
-} else {
-    // Render the content using $disbursement_data
-    foreach ($disbursement_data as $value) {
-        // Render each data point
-        echo "Total Principal Disbursed: $value<br>";
-    }
-}
+//
+//$data = disbursed_by_range($fromGraphDate.'/'.$toDate);
+//$disbursement = $data['disbursedLoanMonths'];
+//$disbursement_data = [];
+//
+//foreach ($disbursement as $disburse_data) {
+//    $disbursement_data[] = $disburse_data['totalPrincipalDisbursed'];
+//}
+//
+//// Check if $disbursement_data is empty
+//if (empty($disbursement_data)) {
+//    // Handle the case where there is no data (e.g., display a message)
+//    $disbursement_data = disbursed_by_range($fromGraphDate.'/'.$toDate);
+//    // echo "No data available.";
+//} else {
+//    // Render the content using $disbursement_data
+//    foreach ($disbursement_data as $value) {
+//        // Render each data point
+//        echo "Total Principal Disbursed: $value<br>";
+//    }
+//}
 
 ?>
 

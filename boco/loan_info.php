@@ -57,8 +57,6 @@ include('../controllers/credit_analytics.php');
 
                 <?php include('../includes/forms/view_loan_info.php'); ?>
 
-                <?php include('../includes/tables/track_loans_progress_table.php'); ?>
-
 				<?php include('../includes/footer.php');?>
 			</div>
 		</div>

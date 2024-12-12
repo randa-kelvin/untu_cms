@@ -68,6 +68,18 @@
 		</script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script>
+        function handleSubmit(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const submitButton = document.getElementById("submitButton");
+            submitButton.disabled = true; // Disable the button
+            submitButton.innerText = "Sending application..."; // Change button text
+            event.target.submit(); // Proceed with the form submission
+        }
+    </script>
+
+
+
     <!-- Google Tag Manager -->
 		<script>
 			(function (w, d, s, l, i) {

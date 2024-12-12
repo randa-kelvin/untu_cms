@@ -10,7 +10,7 @@
             <div class="col-10">
                 <h4 class="text-blue h4">
                     <?php
-                        echo " Purchase Order Requisitions ( ". $req_status ." )";
+                        echo " Purchase Order Requisitions";
                     ?>
                 </h4>
             </div>

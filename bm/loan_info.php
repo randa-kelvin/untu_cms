@@ -17,18 +17,6 @@ include ('check_role.php');
         assign_lo($assignTo, $assignedBy, $loanId, $userId, $additional_remarks, $processLoanStatus, $bmDateAssignLo, $pipelineStatus);
     }
 
-//    if(isset($_POST['set_meeting'])) {
-//        $recipientEmail = $_POST['recipientEmail'];
-//        $subject = $_POST['subject'];
-//        $message = $_POST['message'];
-//        $loanId = $_POST['loanId'];
-//        $userId = $_POST['userId'];
-//        $scheduledBy = $_POST['fullname'];
-//        $bmDateMeeting = date("Y-m-d H:i:s");
-//        $pipelineStatus = "bm_scheduled_meeting";
-//
-//        setMeeting($recipientEmail, $subject, $message, $loanId, $userId, $scheduledBy, $bmDateMeeting, $pipelineStatus);
-//    }
 ?>
 
 <!DOCTYPE html>
@@ -58,7 +46,7 @@ include ('check_role.php');
 
                 <?php include('../includes/forms/view_loan_info.php'); ?>
 
-                <?php include('../includes/tables/track_loans_progress_table.php'); ?>
+<!--                --><?php //include('../includes/tables/track_loans_progress_table.php'); ?>
 
 				<?php include('../includes/footer.php');?>
 			</div>

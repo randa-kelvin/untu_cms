@@ -7,7 +7,7 @@
 //            ini_set('display_errors', 1);
 
             // Example usage
-            $xdsData = get_consumer_data();
+            $xdsData = get_consumer_data($nationalId);
 
             if (is_array($xdsData) && !empty($xdsData)) {
                 $consumer = $xdsData;

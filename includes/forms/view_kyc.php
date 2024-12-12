@@ -4,7 +4,7 @@
     foreach ($client_file_uploads as $application):
         ?>
 
-        <div class="col-lg-3 col-md-4 col-sm-12 mb-10">
+        <div class="col-lg-3 col-md-4 col-sm-12 col-3">
             <div class="card card-box">
                 <?php
                 $fileName = $application['fileName'];

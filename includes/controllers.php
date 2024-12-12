@@ -483,20 +483,17 @@ function disbursements($fromDate,$toDate){
     }
 }
 
-function disbursed_by_range($display_range){
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $disbursements_response = curl_exec($ch);
-    curl_close($ch);
-
-    $data = json_decode($disbursements_response, true);
-//        $disbursement_data = [];
-//        foreach ($data as $loan) {
-//            $disbursement_data[] = $data['totalPrincipalDisbursed'];
-//        }
-    return $data;
-}
+//function disbursed_by_range($display_range){
+//    $ch = curl_init();
+//    curl_setopt($ch, CURLOPT_URL, 'http://localhost:7878/api/utg/musoni/loans/disbursed-by-range/'.$display_range);
+//    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//    $disbursements_response = curl_exec($ch);
+//    curl_close($ch);
+//
+//    $data = json_decode($disbursements_response, true);
+//
+//    return $data;
+//}
 
 function branch_targets(){
     $ch = curl_init();
@@ -531,7 +528,8 @@ function loans($url){
 }
 // ######################  APPLY FOR A LOAN APPLICATIONS - CMS #################################
 
-if(isset($_POST['loan_application'])){
+if (isset($_POST['loan_application'])) {
+    // Input fields processing
     $firstname = $_POST['firstname'];
     $middlename = $_POST['middlename'];
     $lastname = $_POST['lastname'];
@@ -571,17 +569,16 @@ if(isset($_POST['loan_application'])){
     $caSignature = "Unsigned";
     $cmSignature = "Unsigned";
     $finSignature = "Unsigned";
-    $pipelineStatus = "client_application" ;
+    $pipelineStatus = "client_application";
 
-    $user_loans = loans('/user/'.$_SESSION['userId']);
+    $user_loans = loans('/user/' . $_SESSION['userId']);
     $loanCount = 0;
-    if($user_loans <> null){ $loanCount = 1;}
+    if ($user_loans <> null) { $loanCount = 1; }
 
     $url = "http://127.0.0.1:7878/api/utg/credit_application";
     $data_array = array(
-
         'firstName' => $firstname,
-        'middleName'=> $middlename,
+        'middleName' => $middlename,
         'lastName' => $lastname,
         'idNumber' => $id_number,
         'maritalStatus' => $marital,
@@ -597,10 +594,8 @@ if(isset($_POST['loan_application'])){
         'loanAmount' => $loan,
         'tenure' => $tenure,
         'businessName' => $businessName,
-//        'businessAddress' => $businessAddress,
         'businessStartDate' => $businessStartDate,
         'branchName' => $branchName,
-
         'nextOfKinName' => $next_of_kin_name,
         'nextOfKinPhone' => $next_of_kin_phone,
         'nextOfKinRelationship' => $next_of_kin_relationship,
@@ -609,8 +604,6 @@ if(isset($_POST['loan_application'])){
         'nextOfKinPhone2' => $next_of_kin_phone2,
         'nextOfKinRelationship2' => $next_of_kin_relationship2,
         'nextOfKinAddress2' => $next_of_kin_address2,
-
-//        'dateCreated' => $date_created,
         'userId' => $_SESSION['userId'],
         'loanStatus' => $loan_status,
         'loanFileId' => $loanFileId,
@@ -624,7 +617,6 @@ if(isset($_POST['loan_application'])){
         'pipelineStatus' => $pipelineStatus,
         'loanCount' => $loanCount,
         'platformUsed' => 'web-application'
-
     );
 
     $data = json_encode($data_array);
@@ -635,97 +627,112 @@ if(isset($_POST['loan_application'])){
     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, true);
+
     $resp = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // Get the HTTP status code
 
     $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
     $headerStr = substr($resp, 0, $headerSize);
     $bodyStr = substr($resp, $headerSize);
 
+        // Decode the response body as JSON
+        $decoded = json_decode($bodyStr, true);
+
+
+    curl_close($ch);
+
+
+
+
+
     // Check HTTP status code
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
-            case 201:  # OK redirect to dashboardaudits($_SESSION['userid'], "Client Loan Application successful", $_SESSION['branch']);
-//                sendEmail("subject", "message", "user");
-                $data = loans('/loanFileId/'.$loanFileId);
+            case 201:
+                echo "<script>showPreloader();</script>";
+
+                // Proceed with fetching loan details
+                $data = loans('/loanFileId/' . $loanFileId);
                 $loanId = $data["id"];
 
-
-                // ################## ------------------------------ send email to BOCOS ------------------------------------ #######################
-
+                // Send email logic
                 $ch = curl_init();
-
-                curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/users/roleAndBranch/BackOfficeCreditOfficer/'.$branchName);
+                curl_setopt($ch, CURLOPT_URL, 'http://127.0.0.1:7878/api/utg/users/roleAndBranch/BackOfficeCreditOfficer/' . $branchName);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $resp = curl_exec($ch);
                 curl_close($ch);
                 $boco = json_decode($resp, true);
-                foreach ($boco as $bocos):
 
+                foreach ($boco as $bocos):
                     $recipientName = $bocos['firstName'];
                     $recipientEmail = $bocos['contactDetail']['emailAddress'];
-
-                    $url = "http://127.0.0.1:7878/api/utg/credit_application/newClientloanEmail/".$recipientName.'/'.$recipientEmail;
-
+                    $url = "http://127.0.0.1:7878/api/utg/credit_application/newClientloanEmail/" . $recipientName . '/' . $recipientEmail;
                     $data_array = array(
                         'recipientName' => $recipientName,
                         'recipientEmail' => $recipientEmail
                     );
-
                     $data = json_encode($data_array);
                     $ch = curl_init();
-
                     curl_setopt($ch, CURLOPT_URL, $url);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
                     curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
                     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                    curl_setopt($ch, CURLOPT_HEADER, true );
+                    curl_setopt($ch, CURLOPT_HEADER, true);
                     $resp = curl_exec($ch);
-
                     curl_close($ch);
-
                 endforeach;
 
-// ################## ------------------------------ End send email to BOCOS ------------------------------------ #######################
-
-
-
+                // Hide pre-loader after email logic completes
+                echo "<script>hidePreloader();</script>";
                 echo "<script>alert('Application sent successfully. You can now upload the required documents.');</script>";
                 echo "<script>window.location.href = 'kyc_documents.php';</script>";
                 break;
-            case 400:  # Bad Request
-                $decoded = json_decode($bodyStr);
-                foreach($decoded as $key => $val) {
-                }
-                $_SESSION['error'] = "Failed. Please try again, ".$val;
+
+            case 400: // Bad Request
+                // Extract the error message from the decoded response
+                $errorMessage = isset($decoded['message']) ? $decoded['message'] : "Failed. Please try again.";
+                echo "<script>
+                        var errorMessage = " . json_encode($errorMessage) . ";  // Pass error message to JS
+                        alert(errorMessage);  // Display the error message in an alert
+                        window.location.href = 'loan_applications.php?state=apply';  // Redirect to loan applications page
+                      </script>";
                 audits($_SESSION['userid'], "Client Loan Application failed", $_SESSION['branch']);
-                header('location: loan_applications.php?state=apply');
                 break;
-            case 401: # Unauthorixed - Bad credientials
-                $_SESSION['error'] = 'Application failed.. Please try again!';
+
+
+
+            case 401: // Unauthorized
+                echo "<script>
+                        alert('Application failed. Please try again!');
+                        window.location.href = 'loan_applications.php?state=apply';
+                      </script>";
                 audits($_SESSION['userid'], "Client Loan Application failed", $_SESSION['branch']);
-                header('location: loan_applications.php?state=apply');
                 break;
-            default:
-                $_SESSION['error'] = 'Not able to send application'. "\n";
-                header('location: loan_applications.php?state=apply');
+
+            default: // Other Errors
+                echo "<script>
+                        alert('Not able to send application. Please try again.');
+                        window.location.href = 'loan_applications.php?state=apply';
+                      </script>";
+                break;
         }
     } else {
-        $_SESSION['error'] = 'Application failed.. Please try again!'. "\n";
+        $_SESSION['error'] = 'Application failed. Please try again!';
         audits($_SESSION['userid'], "Client Loan Application failed", $_SESSION['branch']);
-        header('location: loan_applications.php?state=apply');
+        echo "<script>
+            alert('Application failed. Please try again!');
+            window.location.href = 'loan_applications.php?state=apply';
+          </script>";
     }
-//    curl_close($ch);
-    $decoded = json_decode($resp, true);
-}
 
+}
 
 if (isset($_POST['credit_check'])){
     $loanId = $_POST['id'];
     $nationalId = $_POST['national_id'];
 
-
-//    sendCreditCheckedLoanRequest($loanId);
+    sendCreditCheckedLoanRequest($loanId);
     saveConsumerData($nationalId);
 
     echo 'Request processed successfully.';
@@ -2261,6 +2268,7 @@ if(isset($_POST['set_parameters'])) {
             case 200:  # OK redirect to dashboard
                 $_SESSION['info'] = "Successfully updated";
                 audit($_SESSION['userid'], "Updated values for a loan agreed in CC meeting", $_SESSION['branch']);
+                echo "<script>alert('Updated Successfully!');</script>";
                 header('location: loan_info.php?menu='.$cc_level.'&loan_id='.$loanId.'&userid='.$userId);
                 break;
             default:

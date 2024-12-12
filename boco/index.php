@@ -4,9 +4,10 @@ include ('check_role.php');
 //	include('charts_data.php');
 	$nav_header = "Dashboard";
     include('../includes/controllers.php');
-//    $url = '/byBranch/'.$_SESSION['branch'];
-//    $url = '/unchecked/PENDING/'.$_SESSION['branch'];
-//    $caseloads = 'caseloadsByBranch/'.$_SESSION['branch'];
+    $caseloads = 'caseloadsByBranch/'.$_SESSION['branch'];
+
+    $state = "PENDING";
+    $url = '/unchecked/PENDING/'.str_replace(' ', '', $_SESSION['branch']);
 
 ?>
 
@@ -32,16 +33,16 @@ include ('check_role.php');
 
 		<div class="main-container">
 			<div class="pd-ltr-20">
-					
+
 				<?php include('../includes/dashboard/topbar_widget.php'); ?>
-					
+
 				<?php include('../includes/dashboard/welcome_widget.php'); ?>
 
 <!--				--><?php //include('../includes/dashboard/small_simple_summary_widget.php'); ?>
 
                 <?php include('../includes/dashboard/cms_loans_graph.php'); ?>
 
-<!--                --><?php //include('../includes/tables/loans_table_widget.php'); ?>
+                <?php include('../includes/tables/loans_table_widget.php'); ?>
 
 				<?php include('../includes/footer.php');?>
 			</div>

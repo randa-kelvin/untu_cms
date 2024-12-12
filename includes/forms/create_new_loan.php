@@ -1,5 +1,3 @@
-<?php
-?>
 
 <!-- Form grid Start -->
 <div class="pd-20 card-box mb-30">
@@ -12,7 +10,9 @@
 <!--            <a href="#form-grid-form" class="btn btn-primary btn-sm scroll-click" rel="content-y" data-toggle="collapse" role="button"><i class="fa fa-code"></i> Source Code</a>-->
 <!--        </div>-->
     </div>
-    <form action="" method="post" enctype="multipart/form-data">
+    <form action="" method="post" enctype="multipart/form-data" >
+<!--    <form action="" method="post" enctype="multipart/form-data" onsubmit="handleSubmit(event)">-->
+
         <?php $user_loans = loans('/user/'.$_SESSION['userId']); ?>
         <div class="row">
             <div class="col-md-4 col-sm-12">
@@ -298,8 +298,22 @@
         </p>
         <input class="form-control" type="hidden" name="loanId" required value="<?php echo $_GET['id'] ?>">
         <input class="btn btn-success" type = "submit" value = "Send Application" name= "loan_application" id = "submit" Style = "border-radius: 0.38em; border:none; align: centre;">
-
+        <input
+                class="btn btn-success"
+                type="submit"
+                value="Send Application"
+                name="loan_application"
+                id="submitButton"
+                style="border-radius: 0.38em; border:none; text-align: center;"
+        />
     </form>
+    <script>
+        function handleSubmit(form) {
+            const submitButton = document.getElementById('submitButton');
+            submitButton.value = "Submitting Application...";
+            submitButton.disabled = true; // Disable the button to prevent multiple submissions
+        }
+    </script>
 </div>
 <!-- Form grid End -->
 

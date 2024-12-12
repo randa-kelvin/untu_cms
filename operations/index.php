@@ -1,57 +1,9 @@
 <?php
 include('../session/session.php');
-include ('check_role.php');
+include('check_role.php');
 //	include('charts_data.php');
 $nav_header = "Dashboard";
 include('../includes/controllers.php');
-
-$fromGraphDate = date('Y-m-d');
-$fromDate = date('Y-m-d');
-$toDate = date('Y-m-d');
-if (isset($_POST['pick_range'])) {
-    // Check if the form is submitted
-    if (isset($_POST['date_range']) && !empty($_POST['date_range'])) {
-        // Get the selected date range from the form
-        list($fromDate, $toDate) = explode(' - ', $_POST['date_range']);
-        // Convert the dates to the desired format
-        $fromDate = date('Y-m-d', strtotime($fromDate));
-        $toDate = date('Y-m-d', strtotime($toDate));
-    }
-}
-//    if (date('Y-m-d') != $fromDate){
-//        $fromGraphDate = $fromDate;
-//    }
-$data = disbursed_by_range($fromGraphDate.'/'.$toDate);
-$disbursement = $data['disbursedLoanMonths'];
-$disbursement_data = [];
-
-foreach ($disbursement as $disburse_data) {
-    $disbursement_data[] = $disburse_data['totalPrincipalDisbursed'];
-}
-
-// Check if $disbursement_data is empty
-if (empty($disbursement_data)) {
-    // Handle the case where there is no data (e.g., display a message)
-    $disbursement_data = disbursed_by_range($fromGraphDate.'/'.$toDate);
-    // echo "No data available.";
-} else {
-    // Render the content using $disbursement_data
-    foreach ($disbursement_data as $value) {
-        // Render each data point
-        echo "Total Principal Disbursed: $value<br>";
-    }
-}
-
-//echo '$ ' . number_format($montlhy_disbursement['totalPrincipalDisbursed'], 2, '.', ',');
-
-$target_data = [1100000, 1200000, 1400000, 1100000, 1350000, 1200000, 1300000, 1100000, 1500000, 1200000, 1800000, 2000000];
-$disbursement_rate = round((array_sum($disbursement_data)/array_sum(array_slice($target_data, 0, count($disbursement_data))))*100, 0);
-
-$branches = branches();
-$widget_title = array_merge($branches, ["All Branches"]);
-
-$widget_pipeline = ["210000", "180000", "124000", "68000", "80000", "987000", "987000"];
-$disbursement_months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
 
 ?>
 
@@ -109,7 +61,7 @@ include('../includes/header.php');
 
         <?php include('../includes/tables/disbursements_table_widget.php'); ?>
 
-        <?php include('../includes/footer.php');?>
+        <?php include('../includes/footer.php'); ?>
     </div>
 </div>
 
@@ -143,16 +95,17 @@ include('../includes/header.php');
 <script src="../vendors/scripts/datatable-setting.js"></script>
 
 
-
 <!-- Google Tag Manager (noscript) -->
 <noscript
-><iframe
+>
+    <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
             height="0"
             width="0"
             style="display: none; visibility: hidden"
     ></iframe
-    ></noscript>
+    >
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 </body>

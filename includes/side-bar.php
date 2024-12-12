@@ -2,7 +2,7 @@
     <div class="brand-logo">
         <a href="index.php">
             <img src="../vendors/images/untu-logo.png" alt="" class="dark-logo"/>
-            <img src="../vendors/images/untu-logo-white.png" alt="" class="light-logo"/>
+            <img src="../vendors/images/untu-logo.png" alt="" class="light-logo"/>
         </a>
         <div class="close-sidebar" data-toggle="left-sidebar-close">
             <i class="ion-close-round"></i>

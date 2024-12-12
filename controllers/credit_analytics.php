@@ -1,11 +1,11 @@
 <?php
 
-function get_consumer_data(){
-    $nationalId = "23037151F23";
+function get_consumer_data($nationalId){
+//    $nationalId = "23037151F23";
     $ch = curl_init();
 
-//    $url = "http://localhost:8100/xds/nationalId/" . urlencode($nationalId);
-    $url = "http://localhost:8100/xds/nationalId/23037151F23";
+    $url = "http://localhost:8100/xds/nationalId/" . urlencode($nationalId);
+//    $url = "http://localhost:8100/xds/nationalId/23037151F23";
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
