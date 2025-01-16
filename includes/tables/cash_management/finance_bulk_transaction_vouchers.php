@@ -176,7 +176,7 @@
             <!-- Button to Open the Modal -->
             <button id="bulkSecondApproveModal" type="button" class="btn btn-success" data-toggle="modal"
                     data-target="#myModal">
-                Approve All
+                Approve Selected Transactions
             </button>
         </div>
     </div>
