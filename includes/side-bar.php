@@ -136,6 +136,16 @@
                             </ul>
                         </li>
                     <?php } ?>
+                    <?php if ($_SESSION['tmsUser']['role'] != null){ ?>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon bi bi-cash-stack"></span><span class="mtext">Treasury Management</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="treasury_management.php?menu=main">Dashboard</a></li>
+                            </ul>
+                        </li>
+                    <?php } ?>
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle">
 								<span class="micon bi bi-folder"></span
@@ -399,6 +409,19 @@
                             <li><a href="pipeline_report.php">Pipeline Summary Report</a></li>
                         </ul>
                     </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle">
+								<span class="micon bi bi-table"></span
+                                ><span class="mtext">Credit Analytics</span>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="http://13.246.85.3:4200/credit/loan-applications/pending" target="_blank">Client Eligibility</a>
+                            </li>
+                            <!--                            <li><a href="signed_tickets.php">Signed Ticket(s)</a></li>-->
+                        </ul>
+                    </li>
                     <?php if ($_SESSION['tmsUser']['role'] != null){ ?>
                         <li class="dropdown">
                             <a href="javascript:;" class="dropdown-toggle">
@@ -639,6 +662,16 @@
                             <li><a href="loan_applications.php?state=reject">Rejected Applications</a></li>
                         </ul>
                     </li>
+                    <li class="dropdown">
+                        <a href="javascript:" class="dropdown-toggle">
+								<span class="micon bi bi-table"></span
+                                ><span class="mtext">Tracking Tickets</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="predisbursed_tickets.php">Ticket(s) Signing</a></li>
+                            <li><a href="signed_tickets.php">Disbursed Ticket(s)</a></li>
+                        </ul>
+                    </li>
                     <?php if ($_SESSION['poUser']['role'] != null) { ?>
                         <li class="dropdown">
                             <a href="javascript:" class="dropdown-toggle">
@@ -877,6 +910,16 @@
                             <li><a href="signed_tickets.php">Signed Ticket(s)</a></li>
                         </ul>
                     </li>
+                    <?php if ($_SESSION['tmsUser']['role'] != null){ ?>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon bi bi-cash-stack"></span><span class="mtext">Treasury Management</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="treasury_management.php?menu=main">Dashboard</a></li>
+                            </ul>
+                        </li>
+                    <?php } ?>
                     <li class="dropdown">
                         <a href="javascript:" class="dropdown-toggle">
 								<span class="micon bi bi-folder"></span

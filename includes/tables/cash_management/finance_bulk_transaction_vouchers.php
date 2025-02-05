@@ -61,12 +61,21 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <form id="bulkSecondApprove" action="" method="POST">
+                    <form id="bulkSecondApprove" action="" method="POST" onsubmit="disableApproveButton()">
                         <input type="hidden" id="secondApproveListInput" name="secondApproveList">
-                        <input type="submit" class="btn btn-success" value="Approve All">
+                        <input type="submit" id="approveAllBtn" class="btn btn-success" value="Approve All">
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
+
+                <script>
+                    function disableApproveButton() {
+                        var btn = document.getElementById("approveAllBtn");
+                        btn.value = "Approving...";
+                        btn.disabled = true;
+                    }
+                </script>
+
 
             </div>
         </div>
@@ -87,28 +96,23 @@
     <div class="pb-20">
         <table class="table hover table stripe data-table-export nowrap">
             <thead class="small">
-            <tr>
-                <th>Select</th>
-                <th>Application Date</th>
-                <th>Reference No</th>
-
-                <th>First Approver</th>
-
-                <th>Second Approver</th>
-
-                <th>Amount</th>
-                <th>Withdrawal Purpose</th>
-
-                <th>From Vault</th>
-                <th>To Vault</th>
-
-                <th class="datatable-nosort">Action</th>
-            </tr>
+                <tr>
+                    <th>Select</th>
+                    <th>Application Date</th>
+                    <th>Reference No</th>
+                    <th>First Approver</th>
+                    <th>Second Approver</th>
+                    <th>Amount</th>
+                    <th>Withdrawal Purpose</th>
+                    <th>From Vault</th>
+                    <th>To Vault</th>
+                    <th class="datatable-nosort">Action</th>
+                </tr>
             </thead>
             <tbody>
             <?php
-            $transactions = cms_finance_manager_transaction_vouchers($_SESSION['userId'], $secondApprovalStatus);
-            foreach ($transactions as $row):?>
+                $transactions = cms_finance_manager_transaction_vouchers($_SESSION['userId'], $secondApprovalStatus);
+                foreach ($transactions as $row):?>
                     <tr>
                         <td>
                             <label for="checkbox<?= htmlspecialchars($row["id"]) ?>" hidden="hidden">
@@ -152,10 +156,7 @@
                             if ($row['secondApprovalStatus'] == "DECLINED") {
                                 echo "<label style='padding: 6px;' class='badge badge-danger'>DECLINED</label>";
                             }
-
                             ?></td>
-
-
                         <td><?= '$' . number_format($row["amount"], 2)." (".htmlspecialchars($row["currency"]).")" ?></td>
                         <td><?php $withdrawalPurpose = withdrawal_purposes($row["withdrawalPurpose"]);
                                 echo $withdrawalPurpose['name']; ?></td>
@@ -163,7 +164,6 @@
                         <td><?= htmlspecialchars($row["fromVault"]["name"]) ?></td>
                         <td><?= htmlspecialchars($row["toVault"]["name"]) ?></td>
                         <td>
-
                             <a class="dropdown-item"
                                href="../finance/view_transaction_voucher.php?transactionId=<?= $row['id'] ?>"
                             ><i class="dw dw-eye"></i> View</a>

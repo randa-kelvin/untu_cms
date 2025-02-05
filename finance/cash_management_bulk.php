@@ -1,6 +1,6 @@
 <?php
 include('../session/session.php');
-include ('check_role.php');
+include('check_role.php');
 include('../includes/controllers.php');
 $nav_header = "Cash Management Dashboard";
 
@@ -50,9 +50,9 @@ include('../includes/header.php');
 
         <?php include('../includes/dashboard/topbar_widget.php'); ?>
 
-        <?php if ($_GET['menu'] == "main"){ ?>
+        <?php if ($_GET['menu'] == "main") { ?>
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
+                document.addEventListener('DOMContentLoaded', function () {
                     const urlParams = new URLSearchParams(window.location.search);
                     if (urlParams.has('success')) {
                         // Display a popup or alert message
@@ -66,7 +66,8 @@ include('../includes/header.php');
                     <div class="tab">
                         <ul class="nav nav-tabs customtab" role="tablist">
                             <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#pending" role="tab" aria-selected="true">Pending</a>
+                                <a class="nav-link active" data-toggle="tab" href="#pending" role="tab"
+                                   aria-selected="true">Pending</a>
                             </li>
 
                         </ul>
@@ -74,9 +75,9 @@ include('../includes/header.php');
                             <div class="tab-pane fade show active" id="pending" role="tabpanel">
                                 <div class="pd-20">
                                     <?php
-                                        $secondApprovalStatus = "PENDING";
-                                        include('../includes/tables/cash_management/finance_bulk_transaction_vouchers.php');
-                                        ?>
+                                    $secondApprovalStatus = "PENDING";
+                                    include('../includes/tables/cash_management/finance_bulk_transaction_vouchers.php');
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -87,7 +88,7 @@ include('../includes/header.php');
         <?php }
         ?>
 
-        <?php include('../includes/footer.php');?>
+        <?php include('../includes/footer.php'); ?>
     </div>
 </div>
 
@@ -123,13 +124,15 @@ include('../includes/header.php');
 
 <!-- Google Tag Manager (noscript) -->
 <noscript
-><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
+>
+    <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
+            height="0"
+            width="0"
+            style="display: none; visibility: hidden"
     ></iframe
-    ></noscript>
+    >
+</noscript>
 <!-- End Google Tag Manager (noscript) -->
 
 </body>

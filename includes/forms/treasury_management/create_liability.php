@@ -180,7 +180,7 @@
 
             <div class="col-md-6 col-sm-12">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-success btn-block" value="Submit" name="create_liability">CREATE LIABILITY</button>
+                    <button type="submit" class="btn btn-success btn-block" value="Submit" name="create_liability">CREATE LIABILITY - <?php echo $test; ?></button>
                 </div>
             </div>
         </form>

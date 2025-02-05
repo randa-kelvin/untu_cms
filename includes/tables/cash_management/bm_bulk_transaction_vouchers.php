@@ -61,12 +61,20 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <form id="bulkFirstApprove" action="" method="POST">
+                    <form id="bulkFirstApprove" action="" method="POST" onsubmit="disableFirstApproveButton()">
                         <input type="hidden" id="firstApproveListInput" name="firstApproveList">
-                        <input type="submit" class="btn btn-success" value="Approve All">
+                        <input type="submit" id="approveFirstBtn" class="btn btn-success" value="Approve All">
                     </form>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
+
+                <script>
+                    function disableFirstApproveButton() {
+                        var btn = document.getElementById("approveFirstBtn");
+                        btn.value = "Approving...";
+                        btn.disabled = true;
+                    }
+                </script>
 
             </div>
         </div>

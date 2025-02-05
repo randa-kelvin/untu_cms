@@ -197,7 +197,7 @@ function updateAuthorities($id, $branch, $authlevel,$name){
     if (!curl_errno($ch)) {
         switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
             case 200:  # OK redirect to dashboard
-                $_SESSION['info'] = "Authorisationd Updated Successfully!";
+                $_SESSION['info'] = "Authorisation Updated Successfully!";
                 audit($_SESSION['userid'], "Updated Authorisation! - ".$id, $_SESSION['branch']);
                 header('location: cash_management.php?menu=main');
                 break;
@@ -296,7 +296,7 @@ include('../includes/header.php');
 <!--                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab" aria-selected="true">Account Balances</a>-->
 <!--                            </li>-->
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#assign_role" role="tab" aria-selected="false">Assign CMS Role</a>
+                                <a class="nav-link active" data-toggle="tab" href="#assign_role" role="tab" aria-selected="false">Assign CMS Role</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#vault_auth" role="tab" aria-selected="false">Vaults Authorization</a>
@@ -318,6 +318,11 @@ include('../includes/header.php');
                                     Manage Vaults
                                 </a>
                             </li>
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link" data-toggle="tab" href="#all" role="tab"-->
+<!--                                   aria-selected="false">Pending Trans Vouchers</a>-->
+<!--                            </li>-->
+
                             <li class="nav-item">
                                 <a class="nav-link text-blue" data-toggle="tab" href="#auditTrail" role="tab" aria-selected="false" >
                                     Audit Trail
@@ -325,12 +330,12 @@ include('../includes/header.php');
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">
-                                <div class="pd-20">
+<!--                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">-->
+<!--                                <div class="pd-20">-->
 <!--                                    --><?php //include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade row" id="assign_role" role="tabpanel">
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="tab-pane fade show active" id="assign_role" role="tabpanel">
 
                                 <form method="post" action="">
                                     <div class="row">
@@ -457,6 +462,11 @@ include('../includes/header.php');
 
                             <div class="tab-pane fade" id="authorisers" role="tabpanel">
                                 <?php include('../includes/tables/cms/authorisers_table.php'); ?>
+                            </div>
+
+                            <div class="tab-pane fade" id="all" role="tabpanel">
+                                <?php $titleStatus="All";
+                                include('../includes/tables/cash_management/finance_transaction_vouchers.php'); ?>
                             </div>
                         </div>
                     </div>

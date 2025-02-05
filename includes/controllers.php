@@ -1509,7 +1509,7 @@ function assign_lo($assignTo, $assignedBy, $loanId, $userId, $additional_remarks
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
                 break;
 
-                case401: # Unauthorixed - Bad credientials
+            case 401: # Unauthorixed - Bad credientials
                 $_SESSION['error'] = 'Update Status failed';
                 header('location: loan_info.php?menu=loan&loan_id='.$loanId.'&userid='.$userId);
 

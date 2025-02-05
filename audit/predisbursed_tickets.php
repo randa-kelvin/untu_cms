@@ -1,22 +1,24 @@
 <?php
-include('../session/session.php');
+	include('../session/session.php');
 include ('check_role.php');
-	include('charts_data.php');
-	$nav_header = "Clients Interim Statements";
-
 	include('../includes/controllers.php');
+	$nav_header = "PreDisbursed Tickets";
+
+//    $predisbursement_ticket = '/ticketNotSigned/ACCEPTED/completed/Unsigned/cc_final_meeting';
+    $sign_ticket = '/auditTicketNotSigned/ACCEPTED/completed/Unsigned/cc_final_meeting';
+    $decline_ticket = 'Declined';
 
 ?>
 
 <!DOCTYPE html>
 <html>
 	<!-- HTML HEAD -->
-	<?php
+	<?php 
 		include('../includes/header.php');
 	?>
-
 	<!-- /HTML HEAD -->
 	<body>
+
 		<!-- Top NavBar -->
 			<?php include('../includes/top-nav-bar.php'); ?>
 		<!-- Top NavBar -->
@@ -30,15 +32,18 @@ include ('check_role.php');
 
 		<div class="main-container">
 			<div class="pd-ltr-20">
-
+					
 				<?php include('../includes/dashboard/topbar_widget.php'); ?>
+					
+				<?php include('../includes/dashboard/lead_summary_widget.php'); ?>
 
-				<?php include('../includes/forms/interim_statements/clients_statement.php'); ?>
+<!--				--><?php //include('../includes/tables/predisbursement_tickets_table.php'); ?>
+				<?php include('../includes/tables/audit_signed_tickets_table.php'); ?>
 
 				<?php include('../includes/footer.php');?>
 			</div>
 		</div>
-
+		
 		<!-- js -->
 		<script src="../vendors/scripts/core.js"></script>
 		<script src="../vendors/scripts/script.min.js"></script>
@@ -49,11 +54,6 @@ include ('check_role.php');
 		<script src="../src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 		<script src="../src/plugins/datatables/js/dataTables.responsive.min.js"></script>
 		<script src="../src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-		<script>
-			var disbursementData = <?php echo json_encode($disbursement_data); ?>;
-			var targetData = <?php echo json_encode($target_data); ?>;
-			var disbursementRate = <?php echo json_encode($disbursement_rate); ?>;
-		</script>
 		<script src="../vendors/scripts/dashboard.js"></script>
 
 		<!-- buttons for Export datatable -->
@@ -66,19 +66,9 @@ include ('check_role.php');
 		<script src="../src/plugins/datatables/js/vfs_fonts.js"></script>
 		<!-- Datatable Setting js -->
 		<script src="../vendors/scripts/datatable-setting.js"></script>
-
-
-
+		
 		<!-- Google Tag Manager (noscript) -->
-		<noscript
-			><iframe
-				src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
-				height="0"
-				width="0"
-				style="display: none; visibility: hidden"
-			></iframe
-		></noscript>
+		<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0" style="display: none; visibility: hidden"></iframe></noscript>
 		<!-- End Google Tag Manager (noscript) -->
-
 	</body>
 </html>

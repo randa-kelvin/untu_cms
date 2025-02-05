@@ -4,7 +4,6 @@
             <?php
                 $req = requisitions('/'.$_GET['req_id']);
                 $req_trans = req_trans("/getByRequisitionId/".$_GET['req_id']);
-
             ?>
 
             <div class="row">
@@ -37,10 +36,19 @@
                                         </div>
                                         <div class="row">
                                             <?php
-                                            // Assuming you have retrieved the transactions and stored them in a variable called $req
-                                            $transactionCount = count($req_trans); // Calculate the total count of transactions
+
+//                                            ini_set('display_errors', 1);
+//                                            ini_set('display_startup_errors', 1);
+//                                            error_reporting(E_ALL);
+
+                                            // Ensure $req_trans is always an array
+                                            $req_trans = isset($req_trans) && is_array($req_trans) ? $req_trans : [];
+
+                                            // Calculate the total count of transactions
+                                            $transactionCount = count($req_trans);
+
                                             $totalAmount = 0; // Initialize the total amount variable
-                                            $discountedAmount = 0; // Initialize the total amount variable
+                                            $discountedAmount = 0; // Initialize the discounted amount variable
 
                                             foreach ($req_trans as $transaction) {
                                                 // Check if 'poAmount' key exists before accessing it
@@ -49,6 +57,7 @@
                                                 }
                                             }
                                             ?>
+
 
                                             <!-- Update the HTML to display the calculated values -->
                                             <div class="col-md-2 col-sm-12">
@@ -62,56 +71,88 @@
                                                 <div class="form-group">
                                                     <label>Withholding Tax:</label>
                                                     <?php
-                                                    foreach($req_trans as $row):
-                                                    endforeach;
-                                                    $sup = suppliers("/" . $row['poSupplier']);
-                                                    $par = parameters();
-                                                    foreach ($par as $parrr) {
+                                                    // Ensure $req_trans is always an array
+                                                    $req_trans = isset($req_trans) && is_array($req_trans) ? $req_trans : [];
 
-                                                        if (($sup['taxClearance'] === null || $sup['taxClearance'] != 'Yes') && $totalAmount > $parrr['cumulative']) {
+                                                    // Initialize the variables
+                                                    $discountedAmount = 0;
+                                                    $supplierFound = false;
 
-                                                            $discountedAmount = $totalAmount * 0.3;
+                                                    // Loop through $req_trans to find the last transaction's supplier
+                                                    foreach($req_trans as $row) {
+                                                        // Process each transaction, but in this case, we'll use the last one
+                                                        $sup = suppliers("/" . $row['poSupplier']);
+                                                        $supplierFound = true;
+                                                    }
+
+                                                    if ($supplierFound) {
+                                                        $par = parameters();
+
+                                                        // Loop through parameters
+                                                        foreach ($par as $parrr) {
+                                                            // Check the tax clearance and total amount conditions
+                                                            if (($sup['taxClearance'] === null || $sup['taxClearance'] != 'Yes') && $totalAmount > $parrr['cumulative']) {
+                                                                $discountedAmount = $totalAmount * 0.3;
+                                                            }
+
+                                                            // Output the input field
                                                             echo '<input type="text" class="form-control" name="req_amount" value="$ ' . number_format($discountedAmount, 2) . '" disabled />';
-                                                        } else {
 
-                                                            echo '<input type="text" class="form-control" name="req_amount" value="$ ' . 0 . '" disabled />';
+                                                            // If you only want to process the first parameter that matches, break the loop
+                                                            break;
                                                         }
+                                                    } else {
+                                                        // Handle the case where no supplier was found or $req_trans was empty
+                                                        echo '<input type="text" class="form-control" name="req_amount" value="$ 0.00" disabled />';
                                                     }
                                                     ?>
                                                 </div>
+
                                             </div>
-<!--                                            <div class="col-md-4 col-sm-12">-->
-<!--                                                <div class="form-group">-->
-<!--                                                    <label>Total Amount:</label>-->
-<!--                                                    <input type="text" class="form-control" name="req_amount" value="$ --><?php //echo number_format($totalAmount, 2); ?><!--" disabled />-->
-<!--                                                </div>-->
-<!--                                            </div>-->
 
                                             <div class="col-md-4 col-sm-12">
                                                 <div class="form-group">
                                                     <label>Revised Amount:</label>
                                                     <?php
-                                                    foreach($req_trans as $row):
-                                                    endforeach;
-                                                    $sup = suppliers("/" . $row['poSupplier']);
-                                                    $par = parameters();
-                                                    foreach ($par as $parrr){
+                                                    // Ensure $req_trans is always an array
+                                                    $req_trans = isset($req_trans) && is_array($req_trans) ? $req_trans : [];
 
-                                                            if ($sup['taxClearance'] === 'No' && $totalAmount > $parrr['cumulative']) {
+                                                    // Initialize variables
+                                                    $actualAmount = 0;
+                                                    $discountedAmount = 0;
+                                                    $supplierFound = false;
 
-                                                                    $discountedAmount = $totalAmount * $parrr['tax'] / 100;
-                                                                    $actualAmount = $totalAmount - $discountedAmount;
-            //                                                        $discountedAmount = $totalAmount * 0.7;
-                                                                        echo '<input type="text" class="form-control" name="req_amount" value="$ ' . number_format($actualAmount, 2) .    ' (Initial Amount : $' . number_format($totalAmount, 2) . ')" disabled />';
-                                                                    } else {
-
-                                                                        echo '<input type="text" class="form-control" name="req_amount" value="$ ' . number_format($totalAmount, 2) . '" disabled />';
-                                                                    }
+                                                    // Loop through $req_trans to find the last transaction's supplier
+                                                    foreach ($req_trans as $row) {
+                                                        $sup = suppliers("/" . $row['poSupplier']);
+                                                        $supplierFound = true;
                                                     }
-                                                     ?>
 
+                                                    if ($supplierFound) {
+                                                        $par = parameters();
+
+                                                        // Loop through parameters
+                                                        foreach ($par as $parrr) {
+                                                            // Check the tax clearance and total amount conditions
+                                                            if ($sup['taxClearance'] === 'No' && $totalAmount > $parrr['cumulative']) {
+                                                                $discountedAmount = $totalAmount * $parrr['tax'] / 100;
+                                                                $actualAmount = $totalAmount - $discountedAmount;
+                                                                echo '<input type="text" class="form-control" name="req_amount" value="$ ' . number_format($actualAmount, 2) . ' (Initial Amount : $' . number_format($totalAmount, 2) . ')" disabled />';
+                                                            } else {
+                                                                echo '<input type="text" class="form-control" name="req_amount" value="$ ' . number_format($totalAmount, 2) . '" disabled />';
+                                                            }
+
+                                                            // If only one parameter should be processed, break the loop
+                                                            break;
+                                                        }
+                                                    } else {
+                                                        // Handle the case where no supplier was found or $req_trans was empty
+                                                        echo '<input type="text" class="form-control" name="req_amount" value="$ 0.00" disabled />';
+                                                    }
+                                                    ?>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4 col-sm-12">
                                                 <div class="form-group">
                                                     <label>Status:</label>

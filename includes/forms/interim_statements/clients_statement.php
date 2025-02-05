@@ -1,48 +1,48 @@
 
 <?php if ($_GET['menu'] == "statement"){ ?>
-<div class="pd-20 card-box mb-30">
-    <div class="clearfix">
-        <h4 class="text-blue h4">Generate Interim Statement for Client</h4>
-    </div>
-    <form onsubmit="redirectToPdf(event)" method="POST">
-        <section>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Enter Loan Account Number :</label>
-                        <input type="number" class="form-control" name="acc_number" id="acc_number" required />
+    <div class="pd-20 card-box mb-30">
+        <div class="clearfix">
+            <h4 class="text-blue h4">Generate Interim Statement for Client</h4>
+        </div>
+        <form onsubmit="redirectToPdf(event)" method="POST">
+            <section>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Enter Loan Account Number :</label>
+                            <input type="number" class="form-control" name="acc_number" id="acc_number" required />
+                        </div>
                     </div>
                 </div>
+            </section>
+
+            <div class="col-md-6 col-sm-12">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-danger">Generate Statement</button>
+                </div>
             </div>
-        </section>
+        </form>
 
-        <div class="col-md-6 col-sm-12">
-            <div class="form-group">
-                <button type="submit" class="btn btn-danger">Generate Statement</button>
-            </div>
-        </div>
-    </form>
+        <script>
+            function redirectToPdf(event) {
+                event.preventDefault();  // Prevent form submission
+                const accNumber = document.getElementById("acc_number").value;
 
-    <script>
-        function redirectToPdf(event) {
-            event.preventDefault();  // Prevent form submission
-            const accNumber = document.getElementById("acc_number").value;
-
-            if (accNumber) {
-                const url = `http://localhost:7878/api/utg/settlements/generateStyledStatementPdf/loanId/${accNumber}`;
-                window.open(url, '_blank');  // Open in a new tab
-            } else {
-                alert("Please enter a loan account number.");
+                if (accNumber) {
+                    const url = `http://13.246.85.3:7878/api/utg/settlements/generateStyledStatementPdf/loanId/${accNumber}`;
+                    window.open(url, '_blank');  // Open in a new tab
+                } else {
+                    alert("Please enter a loan account number.");
+                }
             }
-        }
-    </script>
-</div>
+        </script>
+    </div>
 
 <?php } else if ($_GET['menu'] == "reports") { ?>
 
     <?php
     function get_transaction_report($start_date, $end_date) {
-        $url = "http://localhost:7878/api/utg/settlements/generateMaturedInterestsReport/$start_date/$end_date";
+        $url = "http://13.246.85.3:7878/api/utg/settlements/generateMaturedInterestsReport/$start_date/$end_date";
 
         // Initialize cURL session
         $ch = curl_init();

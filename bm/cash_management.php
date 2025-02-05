@@ -80,32 +80,36 @@ include('../includes/header.php');
                             </li>
                         </ul>
                         <div class="tab-content">
-                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">
-                                <div class="pd-20">
+<!--                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">-->
+<!--                                <div class="pd-20">-->
                                     <?php
 //                                    include('../includes/dashboard/cms_acc_balance_widget.php');
                                     ?>
-                                </div>
-                            </div>
+<!--                                </div>-->
+<!--                            </div>-->
 
-                            <div class="tab-pane fade row show" id="pending" role="tabpanel">
+                            <div class="tab-pane fade show active" id="pending" role="tabpanel">
                                 <div class="pd-20">
-                                    <?php $titleStatus="Pending"; $firstApprovalStatus = "PENDING"; include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
+                                    <?php $titleStatus="Pending"; $firstApprovalStatus = "PENDING";
+                                    include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
                                 </div>
                             </div>
                             <div class="tab-pane fade show" id="approved" role="tabpanel">
                                 <div class="pd-20">
-                                    <?php  $titleStatus="Approved"; $firstApprovalStatus = "APPROVED"; include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
+                                    <?php  $titleStatus="Approved"; $firstApprovalStatus = "APPROVED";
+                                    include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
                                 </div>
                             </div>
                             <div class="tab-pane fade show" id="declined" role="tabpanel">
                                 <div class="pd-20">
-                                    <?php  $titleStatus="Declined"; $firstApprovalStatus = "DECLINED"; include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
+                                    <?php  $titleStatus="Declined"; $firstApprovalStatus = "DECLINED";
+                                    include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
                                 </div>
                             </div>
                             <div class="tab-pane fade show" id="revise" role="tabpanel">
                                 <div class="pd-20">
-                                    <?php  $titleStatus="Revise"; $firstApprovalStatus = "REVISE"; include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
+                                    <?php  $titleStatus="Revise"; $firstApprovalStatus = "REVISE";
+                                    include('../includes/tables/cash_management/bm_transaction_vouchers.php'); ?>
                                 </div>
                             </div>
                         </div>

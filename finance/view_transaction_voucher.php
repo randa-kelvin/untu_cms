@@ -467,8 +467,8 @@ include('../includes/header.php');
                                     <?php
                                     //                            First Approver
                                     if (
-                                        ($transactionVoucher['firstApprovalStatus'] == "PENDING" && $transactionVoucher['secondApprovalStatus'] == "PENDING") ||
-                                        ($transactionVoucher['firstApprovalStatus'] == "REVISE" && $transactionVoucher['secondApprovalStatus'] == "PENDING")
+                                        ($transactionVoucher['firstApprovalStatus'] == "PENDING" && $transactionVoucher['secondApprovalStatus'] == "PENDING" && $transactionVoucher['firstApprover']['id'] == $_SESSION['userid']) ||
+                                        ($transactionVoucher['firstApprovalStatus'] == "REVISE" && $transactionVoucher['secondApprovalStatus'] == "PENDING" && $transactionVoucher['firstApprover']['id'] == $_SESSION['userid'])
                                     ) {
                                         echo '
                                 <div class="col-sm-3 col-md-3 col-form-label">
@@ -516,8 +516,8 @@ include('../includes/header.php');
                                     }
                                     //                            Second Approver
                                     if (
-                                        ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus'] === 'PENDING' && $transactionVoucher['secondApprovalStatus'] === $_SESSION['userid']) ||
-                                        ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus'] === 'REVISE' && $transactionVoucher['secondApprovalStatus'] === $_SESSION['userid'])
+                                        ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus'] === 'PENDING' && $transactionVoucher['secondApprover']['id'] == $_SESSION['userid']) ||
+                                        ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus'] === 'REVISE' && $transactionVoucher['secondApprover']['id'] == $_SESSION['userid'])
                                     ) {
                                         echo '
                                     <div class="col-sm-3 col-md-3 col-form-label">

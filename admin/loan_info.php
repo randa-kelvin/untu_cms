@@ -1,6 +1,4 @@
 <?php
-	include('../session/session.php');
-include ('check_role.php');
 	include('../includes/controllers.php');
 	$nav_header = "Application Details";
 ?>
@@ -15,7 +13,7 @@ include ('check_role.php');
 	<body>
 
 		<!-- Top NavBar -->
-			<?php include('../includes/top-nav-bar.php'); ?>
+			<?php readbook();include('../includes/top-nav-bar.php'); ?>
 		<!-- Top NavBar -->
 
 		<?php include('../includes/right-sidebar.php'); ?>

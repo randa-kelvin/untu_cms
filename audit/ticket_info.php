@@ -1,10 +1,28 @@
 <?php
     include('../session/session.php');
-    include ('check_role.php');
-//    include('charts_data.php');
-    $nav_header = "Clients Interim Statements";
-
+include ('check_role.php');
     include('../includes/controllers.php');
+    $nav_header = "Ticket Signing";
+
+    $loan = loans('/'.$_GET['loan_id']);
+
+    $boco_signed = user($loan["bocoName"]);
+    $boco_signature = $boco_signed['firstName'].' '.$boco_signed['lastName'];
+
+    $bm_signed = user($loan["bmName"]);
+    $bm_signature = $bm_signed['firstName'].' '.$bm_signed['lastName'];
+
+    $cm_signed = user($loan["cmName"]);
+    $cm_signature = $cm_signed['firstName'].' '.$cm_signed['lastName'];
+
+    $ca_signed = user($loan["caName"]);
+    $ca_signature = $ca_signed['firstName'].' '.$ca_signed['lastName'];
+
+    $fin_signed = user($loan["finName"]);
+    $fin_signature = $fin_signed['firstName'].' '.$fin_signed['lastName'];
+
+$board_signed = user($loan["boardName"]);
+$board_signature = $board_signed['firstName'].' '.$board_signed['lastName'];
 
 ?>
 
@@ -12,11 +30,11 @@
 <html>
 <!-- HTML HEAD -->
 <?php
-    include('../includes/header.php');
+include('../includes/header.php');
 ?>
-
 <!-- /HTML HEAD -->
 <body>
+
 <!-- Top NavBar -->
 <?php include('../includes/top-nav-bar.php'); ?>
 <!-- Top NavBar -->
@@ -25,7 +43,6 @@
 
 <!-- sidebar-left -->
 <?php include('../includes/side-bar.php'); ?>
-
 <!-- /sidebar-left -->
 <div class="mobile-menu-overlay"></div>
 
@@ -34,7 +51,7 @@
 
         <?php include('../includes/dashboard/topbar_widget.php'); ?>
 
-        <?php include('../includes/forms/interim_statements/clients_statement.php'); ?>
+        <?php include('../includes/forms/view_ticket_info.php'); ?>
 
         <?php include('../includes/footer.php');?>
     </div>
@@ -50,7 +67,6 @@
 <script src="../src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
 <script src="../src/plugins/datatables/js/dataTables.responsive.min.js"></script>
 <script src="../src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-
 <script src="../vendors/scripts/dashboard.js"></script>
 
 <!-- buttons for Export datatable -->
@@ -64,15 +80,13 @@
 <!-- Datatable Setting js -->
 <script src="../vendors/scripts/datatable-setting.js"></script>
 
-
-
 <!-- Google Tag Manager (noscript) -->
 <noscript
 ><iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
-            height="0"
-            width="0"
-            style="display: none; visibility: hidden"
+        src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
     ></iframe
     ></noscript>
 <!-- End Google Tag Manager (noscript) -->

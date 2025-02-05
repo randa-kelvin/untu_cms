@@ -44,12 +44,6 @@
                             echo "<label style='padding: 7px;' class='badge badge-warning'>Unchecked</label>";
                         }?>
                     </td>
-<!--                    --><?php //}elseif($_SESSION['role'] == "ROLE_BM"){?>
-<!--                        <td>--><?php //if($ticket['bmSignature'] == "Signed" ){
-//                                echo "<label style='padding: 7px;' class='badge badge-success'>Ticket Signed</label>";}
-//                            elseif($ticket['bmSignature'] == "Declined") {echo "<label style='padding: 7px;' class='badge badge-primary'>Ticket Declined</label>";}
-//                            else{echo "<label style='padding: 7px;' class='badge badge-warning'>Waiting for Signature</label>";}?><!--</td>-->
-<!--                    --><?php //} ?>
 
                     <td><?php $loan_officer = user(htmlspecialchars ($ticket["assignTo"]));
                         echo $loan_officer['firstName'].' '.$loan_officer['lastName'];?></td>

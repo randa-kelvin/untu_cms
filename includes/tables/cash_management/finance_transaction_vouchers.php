@@ -39,59 +39,63 @@
             </thead>
             <tbody>
             <?php
-            $transactions = cms_finance_manager_transaction_vouchers($_SESSION['userId'], $secondApprovalStatus);
+            if ($_SESSION['role'] == "ROLE_ADMIN") {
+                $transactions = cms_all_withdrawal_vouchers();
+            } else {
+                $transactions = cms_finance_manager_transaction_vouchers($_SESSION['userId'], $secondApprovalStatus);
+            }
             foreach ($transactions as $row):?>
-                    <tr>
-                        <td><?= htmlspecialchars($row["applicationDate"]) ?></td>
-                        <td><?= htmlspecialchars($row["reference"]) ?></td>
+                <tr>
+                    <td><?= htmlspecialchars($row["applicationDate"]) ?></td>
+                    <td><?= htmlspecialchars($row["reference"]) ?></td>
 
-                        <td><?= htmlspecialchars($row["firstApprover"]['firstName']) . " " . htmlspecialchars($row["firstApprover"]['lastName'])." - "  ?>
+                    <td><?= htmlspecialchars($row["firstApprover"]['firstName']) . " " . htmlspecialchars($row["firstApprover"]['lastName']) . " - " ?>
 
-                            <?php if ($row['firstApprovalStatus'] == "APPROVED") {
-                                echo "<label style='padding: 6px;' class='badge badge-success'>APPROVED</label>";
-                            }
-                            if ($row['firstApprovalStatus'] == "PENDING") {
-                                echo "<label style='padding: 6px;' class='badge badge-warning'>PENDING</label>";
-                            }
-                            if ($row['firstApprovalStatus'] == "DECLINED") {
-                                echo "<label style='padding: 6px;' class='badge badge-danger'>DECLINED</label>";
-                            }
-                            if ($row['firstApprovalStatus'] == "REVISE") {
-                                echo "<label style='padding: 6px;' class='badge badge-secondary'>REVERTED</label>";
-                            } ?>
-                        </td>
+                        <?php if ($row['firstApprovalStatus'] == "APPROVED") {
+                            echo "<label style='padding: 6px;' class='badge badge-success'>APPROVED</label>";
+                        }
+                        if ($row['firstApprovalStatus'] == "PENDING") {
+                            echo "<label style='padding: 6px;' class='badge badge-warning'>PENDING</label>";
+                        }
+                        if ($row['firstApprovalStatus'] == "DECLINED") {
+                            echo "<label style='padding: 6px;' class='badge badge-danger'>DECLINED</label>";
+                        }
+                        if ($row['firstApprovalStatus'] == "REVISE") {
+                            echo "<label style='padding: 6px;' class='badge badge-secondary'>REVERTED</label>";
+                        } ?>
+                    </td>
 
-                        <td><?= htmlspecialchars($row["secondApprover"]['firstName']) . " " . htmlspecialchars($row["secondApprover"]['lastName'])." - "  ?>
+                    <td><?= htmlspecialchars($row["secondApprover"]['firstName']) . " " . htmlspecialchars($row["secondApprover"]['lastName']) . " - " ?>
 
-                            <?php if ($row['secondApprovalStatus'] == "APPROVED") {
-                                echo "<label style='padding: 6px;' class='badge badge-success'>APPROVED</label>";
-                            }
-                            if ($row['secondApprovalStatus'] == "REVISE") {
-                                echo "<label style='padding: 6px;' class='badge badge-secondary'>REVERTED</label>";
-                            }
-                            if ($row['secondApprovalStatus'] == "PENDING") {
-                                echo "<label style='padding: 6px;' class='badge badge-warning'>PENDING</label>";
-                            }
-                            if ($row['secondApprovalStatus'] == "DECLINED") {
-                                echo "<label style='padding: 6px;' class='badge badge-danger'>DECLINED</label>";
-                            }
-                            ?>
-                        </td>
+                        <?php if ($row['secondApprovalStatus'] == "APPROVED") {
+                            echo "<label style='padding: 6px;' class='badge badge-success'>APPROVED</label>";
+                        }
+                        if ($row['secondApprovalStatus'] == "REVISE") {
+                            echo "<label style='padding: 6px;' class='badge badge-secondary'>REVERTED</label>";
+                        }
+                        if ($row['secondApprovalStatus'] == "PENDING") {
+                            echo "<label style='padding: 6px;' class='badge badge-warning'>PENDING</label>";
+                        }
+                        if ($row['secondApprovalStatus'] == "DECLINED") {
+                            echo "<label style='padding: 6px;' class='badge badge-danger'>DECLINED</label>";
+                        }
+                        ?>
+                    </td>
 
 
-                        <td><?= '$' . number_format($row["amount"], 2)." (".htmlspecialchars($row["currency"]).")" ?></td>
-                        <td><?php $withdrawalPurpose = withdrawal_purposes($row["withdrawalPurpose"]);
-                            echo $withdrawalPurpose['name']; ?></td>
+                    <td><?= '$' . number_format($row["amount"], 2) . " (" . htmlspecialchars($row["currency"]) . ")" ?></td>
+                    <td><?php $withdrawalPurpose = withdrawal_purposes($row["withdrawalPurpose"]);
+                        echo $withdrawalPurpose['name']; ?></td>
 
-                        <td><?= htmlspecialchars($row["fromVault"]["name"]) ?></td>
-                        <td><?= htmlspecialchars($row["toVault"]["name"]) ?></td>
-                        <td>
+                    <td><?= htmlspecialchars($row["fromVault"]["name"]) ?></td>
+                    <td><?= htmlspecialchars($row["toVault"]["name"]) ?></td>
+                    <td>
 
-                            <a class="dropdown-item"
-                               href="../finance/view_transaction_voucher.php?transactionId=<?= $row['id'] ?>"
-                            ><i class="dw dw-eye"></i> View</a>
-                        </td>
-                    </tr>
+                        <a class="dropdown-item"
+                           href="../finance/view_transaction_voucher.php?transactionId=<?= $row['id'] ?>"
+                        ><i class="dw dw-eye"></i> View</a>
+                    </td>
+                </tr>
             <?php endforeach; ?>
             </tbody>
         </table>

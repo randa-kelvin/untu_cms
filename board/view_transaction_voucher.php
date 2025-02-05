@@ -262,24 +262,24 @@ include('../includes/header.php');
                             </div>
                         </div>
 
-                            <div class="row">
-                                <div class="col-md-4 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="currency">Currency</label>
-                                        <input type="text"
-                                               value="<?= $transactionVoucher['currency'] ?>"
-                                               class="form-control" name="currency" id="currency" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-md-8 col-sm-12">
-                                    <div class="form-group">
-                                        <label for="withdrawalPurpose">Withdrawal Purpose</label>
-                                        <input type="text" value="<?= $transactionVoucher['withdrawalPurpose'] ?>"
-                                               class="form-control" name="withdrawalPurpose" id="withdrawalPurpose"
-                                               readonly>
-                                    </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label for="currency">Currency</label>
+                                    <input type="text"
+                                           value="<?= $transactionVoucher['currency'] ?>"
+                                           class="form-control" name="currency" id="currency" readonly>
                                 </div>
                             </div>
+                            <div class="col-md-8 col-sm-12">
+                                <div class="form-group">
+                                    <label for="withdrawalPurpose">Withdrawal Purpose</label>
+                                    <input type="text" value="<?= $transactionVoucher['withdrawalPurpose'] ?>"
+                                           class="form-control" name="withdrawalPurpose" id="withdrawalPurpose"
+                                           readonly>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="row">
                             <table class="table">
@@ -480,8 +480,8 @@ include('../includes/header.php');
                             }
                             //                            Second Approver
                             if(
-                                ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus']=== 'PENDING')||
-                                ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus']=== 'REVISE')
+                                ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus']=== 'PENDING' && $transactionVoucher['secondApprover']['id'] == $_SESSION['userid'] && $transactionVoucher['firstApprover']['id'] == $_SESSION['userid']) ||
+                                ($transactionVoucher['firstApprovalStatus'] === "APPROVED" && $transactionVoucher['secondApprovalStatus']=== 'REVISE' && $transactionVoucher['secondApprover']['id'] == $_SESSION['userid'] && $transactionVoucher['firstApprover']['id'] == $_SESSION['userid'])
                             ){
                                 echo '
                                     <div class="col-sm-3 col-md-3 col-form-label">

@@ -104,24 +104,33 @@ include('../includes/header.php');
                     <h5 class="h4 text-blue mb-20">CMS Configurations</h5>
                     <div class="tab">
                         <ul class="nav nav-tabs customtab" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab"
-                                   aria-selected="true">Account Balances</a>
-                            </li>
+<!--                            <li class="nav-item">-->
+<!--                                <a class="nav-link active" data-toggle="tab" href="#acc_balance" role="tab"-->
+<!--                                   aria-selected="true">Account Balances</a>-->
+<!--                            </li>-->
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#cash_trans" role="tab"
                                    aria-selected="false">My Transaction Vouchers</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#pending_transaction" role="tab"
+                                <a class="nav-link active" data-toggle="tab" href="#pending_transaction" role="tab"
                                    aria-selected="false">Pending Trans Voucher</a>
                             </li>
-                            <?php if ($_SESSION['branch'] == "Head Office"): ?>
+                            <?php if ($_SESSION['branch'] == "Head Office"){ ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#pending_trans" role="tab"
+                                       aria-selected="false">Pending Transaction Voucher</a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link" data-toggle="tab" href="#all_cash_trans" role="tab"
                                        aria-selected="false">All Cash Transaction</a>
                                 </li>
-                            <?php endif; ?>
+                            <?php } else{; ?>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#pending_transaction" role="tab"
+                                       aria-selected="false">Pending Transaction Voucher</a>
+                                </li>
+                            <?php } ; ?>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" href="#revise_transaction" role="tab"
                                    aria-selected="false">Revise Transaction Voucher</a>
@@ -137,13 +146,13 @@ include('../includes/header.php');
                         </ul>
                         <div class="tab-content">
                             <!-- Account Balances Tab -->
-                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">
-                                <div class="pd-20">
-                                    <?php include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
-                                </div>
-                            </div>
+<!--                            <div class="tab-pane fade show active" id="acc_balance" role="tabpanel">-->
+<!--                                <div class="pd-20">-->
+<!--                                    --><?php //include('../includes/dashboard/cms_acc_balance_widget.php'); ?>
+<!--                                </div>-->
+<!--                            </div>-->
                             <!-- My Transaction Vouchers Tab -->
-                            <div class="tab-pane fade row" id="cash_trans" role="tabpanel">
+                            <div class="tab-pane fade show active" id="cash_trans" role="tabpanel">
                                 <?php include('../includes/tables/cash_management/cash_withdrawal_vouchers_table.php'); ?>
                             </div>
                             <!-- All Cash Transaction Tab -->
@@ -161,6 +170,12 @@ include('../includes/header.php');
                                 </div>
                             </div>
 
+                            <div class="tab-pane fade row" id="pending_trans" role="tabpanel">
+                                <div class="pd-20">
+                                    <?php $titleStatus="Pending"; $firstApprovalStatus = "PENDING";
+                                    include('../includes/tables/cash_management/boco_transaction_vouchers.php'); ?>
+                                </div>
+                            </div>
                             <div class="tab-pane fade row" id="revise_transaction" role="tabpanel">
                                 <div class="pd-20">
                                     <?php $firstApprovalStatus = "REVISE";
