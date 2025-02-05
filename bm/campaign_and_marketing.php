@@ -35,7 +35,7 @@ include('../includes/header.php');
             <div class="col-lg-12 col-md-12 col-sm-12 mb-30">
                 <div class="pd-20 card-box">
                     <h5 class="h4 text-blue mb-20">Campaign & Marketing</h5>
-                    <?php include('../includes/tables/markerting_campaigns_table.php'); ?>
+                    <?php include('../includes/tables/marketing_campaigns_table.php'); ?>
                 </div>
             </div>
         <?php } elseif ($_GET['menu'] == "add_campaign") {?>

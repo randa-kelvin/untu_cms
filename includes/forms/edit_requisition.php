@@ -1,21 +1,20 @@
-
 <?php
 
 $errors = array();
 
 // Escape user inputs for security
-if(isset($_POST['submit_campaign'])){
+if (isset($_POST['submit_campaign'])) {
     $campaignname = $_POST['campaign_name'];
     $city = $_POST['city'];
     $branch = $_POST['branch'];
-    $zonearea= $_POST['zone'];
+    $zonearea = $_POST['zone'];
     $sector = $_POST['sector'];
     $subsector = $_POST['subsector'];
     $valuechain = $_POST['value_chain'];
+    $venue = $_POST['venue'];
     $resourceneed = $_POST['resource_need'];
     $startdate = $_POST['start_date'];
     $enddate = $_POST['end_date'];
-    $loanofficer = $_POST['loan_officer'];
 
     if ($enddate < $startdate) {
         // End date is greater than start date
@@ -31,9 +30,11 @@ if(isset($_POST['submit_campaign'])){
             'sector' => $sector,
             'subSector' => $subsector,
             'valueChain' => $valuechain,
+            'venue' => $venue,
             'resourceNeed' => $resourceneed,
             'startDate' => $startdate,
-            'endDate' => $enddate
+            'endDate' => $enddate,
+            'campaignStatus' => 'open'
         );
 
         $data = json_encode($data_array);
@@ -45,7 +46,7 @@ if(isset($_POST['submit_campaign'])){
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HEADER, true );
+        curl_setopt($ch, CURLOPT_HEADER, true);
 
         $resp = curl_exec($ch);
 
@@ -59,21 +60,22 @@ if(isset($_POST['submit_campaign'])){
             // $_SESSION['error'] = "";
             switch ($http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE)) {
                 case 200:  # OK redirect to dashboard
-                    ?>        <script>
-                    $(function() {
-                        $("#myModal").modal();//if you want you can have a timeout to hide the window after x seconds
-                    });
-                </script>
+                    ?>
+                    <script>
+                        $(function () {
+                            $("#myModal").modal();//if you want you can have a timeout to hide the window after x seconds
+                        });
+                    </script>
                     <?php
 
                     break;
                 case 400:  # Bad Request
                     $decoded = json_decode($bodyStr);
-                    foreach($decoded as $key => $val) {
+                    foreach ($decoded as $key => $val) {
                         //echo $key . ': ' . $val . '<br>';
                     }
                     // echo $val;
-                    $_SESSION['error'] = "Failed. Please try again, ".$val;
+                    $_SESSION['error'] = "Failed. Please try again, " . $val;
                     header('location: campaign_and_marketing.php?menu=add_campaign');
                     break;
 
@@ -83,11 +85,11 @@ if(isset($_POST['submit_campaign'])){
 
                     break;
                 default:
-                    $_SESSION['error'] = 'Not able to send application'. "\n";
+                    $_SESSION['error'] = 'Not able to send application' . "\n";
                     header('location: campaign_and_marketing.php?menu=add_campaign');
             }
         } else {
-            $_SESSION['error'] = 'Application failed.. Please try again!'. "\n";
+            $_SESSION['error'] = 'Application failed.. Please try again!' . "\n";
             header('location: campaign_and_marketing.php?menu=add_campaign');
 
         }
@@ -98,13 +100,14 @@ if(isset($_POST['submit_campaign'])){
 
 ?>
 
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body text-center font-18">
                 <h3 class="mb-20">Campaign Created Succesfully!</h3>
                 <div class="mb-30 text-center">
-                    <img src="../vendors/images/success.png" />
+                    <img src="../vendors/images/success.png"/>
                 </div>
             </div>
             <div class="row">
@@ -112,7 +115,7 @@ if(isset($_POST['submit_campaign'])){
                 </div>
                 <div class="col-sm-4">
                     <div class="input-group mb-0">
-                        <a class="btn btn-danger btn-lg btn-block"  href="campaign_and_marketing.php?menu=main">Ok</a>
+                        <a class="btn btn-danger btn-lg btn-block" href="campaign_and_marketing.php?menu=main">Ok</a>
                     </div>
                 </div>
             </div>
@@ -138,11 +141,12 @@ if(isset($_POST['submit_campaign'])){
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Branch Name</label>
-                        <select class="custom-select2 form-control"name="branch" id="branch" style="width: 100%; height: 38px" required>
+                        <select class="custom-select2 form-control" name="branch" id="branch"
+                                style="width: 100%; height: 38px" required>
                             <option value="">Select Branch</option>
                             <?php
-                                $branches = branch();
-                                foreach ($branches as $branch) {
+                            $branches = branch();
+                            foreach ($branches as $branch) {
                                 echo "<option value='$branch[branchName]'>$branch[branchName] Branch</option>";
                             }
                             ?>
@@ -155,10 +159,11 @@ if(isset($_POST['submit_campaign'])){
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>City/Town</label>
-                        <select class="custom-select2 form-control" name="city" id="city" style="width: 100%; height: 38px" required>
+                        <select class="custom-select2 form-control" name="city" id="city"
+                                style="width: 100%; height: 38px" required>
                             <option value="">Select City</option>
                             <?php
-                                $cities = cities();
+                            $cities = cities();
                             foreach ($cities as $city) {
                                 echo "<option value='$city[name]'>$city[name]</option>";
                             }
@@ -169,7 +174,8 @@ if(isset($_POST['submit_campaign'])){
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Zone/Area</label>
-                        <select class="custom-select2 form-control" name="zone" id="zone" style="width: 100%; height: 38px" autocomplete="off">
+                        <select class="custom-select2 form-control" name="zone" id="zone"
+                                style="width: 100%; height: 38px" autocomplete="off">
                             <option value="">Select Zone</option>
                             <?php
                             $zones = zones();
@@ -186,11 +192,12 @@ if(isset($_POST['submit_campaign'])){
                     <div class="form-group">
                         <label>Sector</label>
 
-                        <select class="custom-select2 form-control" name="sector" id="sector" style="width: 100%; height: 38px" autocomplete="off" required="required">
+                        <select class="custom-select2 form-control" name="sector" id="sector"
+                                style="width: 100%; height: 38px" autocomplete="off" required="required">
                             <option value="">Select Sector</option>
                             <?php
-                                $bsn_sector = bsn_sector();
-                                foreach ($bsn_sector as $ind) {
+                            $bsn_sector = bsn_sector();
+                            foreach ($bsn_sector as $ind) {
                                 echo "<option value='$ind[name]'>$ind[name]</option>";
                             }
                             ?>
@@ -208,13 +215,13 @@ if(isset($_POST['submit_campaign'])){
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Value Chain(if applicable)</label>
-                        <input type="text" class="form-control" name="value_chain" id="value_chain" >
+                        <input type="text" class="form-control" name="value_chain" id="value_chain">
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Specify Location/(Venue)</label>
-                        <input type="text" class="form-control" name="location" id="location" >
+                        <input type="text" class="form-control" name="venue" id="venue">
                     </div>
                 </div>
             </div>
@@ -245,24 +252,10 @@ if(isset($_POST['submit_campaign'])){
                 </div>
             </div>
             <div class="row">
-<!--                <div class="col-md-6 col-sm-12">-->
-<!--                    <div class="form-group">-->
-<!--                        <label>Assign Loan Officer (Optional)</label>-->
-<!--                        <select class="custom-select2 form-control" id= "loan_officer" style="width: 100%; height: 38px" name="loan_officer" >-->
-<!--                            <option value="">Select Loan Officer</option>-->
-<!--                            --><?php
-//                            $user_role = user_role('LoanOfficer');
-//                            foreach ($user_role as $role) {
-//                                echo "<option value='$role[id]'>$role[firstName] $role[lastName]</option>";
-//                            }
-//                            ?>
-<!--                        </select>-->
-<!--                    </div>-->
-<!--                </div>-->
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Resource Need</label>
-                        <input type="text" class="form-control" name="resource_need" id="resource_need" >
+                        <input type="text" class="form-control" name="resource_need" id="resource_need">
                     </div>
                 </div>
             </div>
@@ -270,20 +263,20 @@ if(isset($_POST['submit_campaign'])){
             <div class="col-md-6 col-sm-12">
 
                 <?php
-//                if ($_SERVER["REQUEST_METHOD"] == "POST") {
-//                    $start_date = $_POST["start_date"];
-//                    $end_date = $_POST["end_date"];
-//
-//                    if ($end_date > $start_date) {
-//                        // End date is greater than start date
-//                        echo "End date is greater than start date.";
-//                        // Add your desired logic here
-//                    } else {
-//                        // End date is not greater than start date
-//                        echo "End date must be greater than start date.";
-//                        // Add your desired logic here
-//                    }
-//                }
+                //                if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                //                    $start_date = $_POST["start_date"];
+                //                    $end_date = $_POST["end_date"];
+                //
+                //                    if ($end_date > $start_date) {
+                //                        // End date is greater than start date
+                //                        echo "End date is greater than start date.";
+                //                        // Add your desired logic here
+                //                    } else {
+                //                        // End date is not greater than start date
+                //                        echo "End date must be greater than start date.";
+                //                        // Add your desired logic here
+                //                    }
+                //                }
                 ?>
                 <div class="form-group">
                     <button type="submit" class="btn btn-danger" value="Submit" name="submit_campaign">Submit</button>

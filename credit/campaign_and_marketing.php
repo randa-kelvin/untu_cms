@@ -65,7 +65,7 @@ include ('check_role.php');
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade show active" id="campaigns" role="tabpanel">
-                                    <?php include('../includes/tables/markerting_campaigns_table.php'); ?>
+                                    <?php include('../includes/tables/marketing_campaigns_table.php'); ?>
                                 </div>
 <!--                                <div class="tab-pane fade" id="status" role="tabpanel">-->
 <!--                                    --><?php //include('../includes/tables/lead_status_table.php'); ?>

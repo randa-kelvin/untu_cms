@@ -287,7 +287,7 @@ if(isset($_POST['Submit'])){
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Resource Need</label>
-                        <input type="text" class="form-control" name="resource_need" id="resource_need" required>
+                        <input type="text" class="form-control" name="resource_need" id="resource_need">
                     </div>
                 </div>
             </div>
