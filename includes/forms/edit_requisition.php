@@ -3,20 +3,23 @@
 $errors = array();
 
 // Escape user inputs for security
-if (isset($_POST['submit_campaign'])) {
-    $campaignname = $_POST['campaign_name'];
-    $city = $_POST['city'];
-    $branch = $_POST['branch'];
-    $zonearea = $_POST['zone'];
-    $sector = $_POST['sector'];
-    $subsector = $_POST['subsector'];
-    $valuechain = $_POST['value_chain'];
-    $venue = $_POST['venue'];
-    $resourceneed = $_POST['resource_need'];
-    $startdate = $_POST['start_date'];
-    $enddate = $_POST['end_date'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $campaignname = $_POST['campaign_name'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $branch = $_POST['branch'] ?? '';
+    $zonearea = $_POST['zone'] ?? '';
+    $sector = $_POST['sector'] ?? '';
+    $subsector = $_POST['subsector'] ?? '';
+    $valuechain = $_POST['value_chain'] ?? '';
+    $venue = $_POST['venue'] ?? '';
+    $startdate = $_POST['start_date'] ?? '';
+    $enddate = $_POST['end_date'] ?? '';
+    $resourceneed = $_POST['resource_need'] ?? '';
 
-    if ($enddate < $startdate) {
+    // Validation example: Check required fields
+    if (empty($campaignname) || empty($city) || empty($branch) || empty($sector) || empty($startdate) || empty($enddate)) {
+        echo "Please fill in all required fields.";
+    } else if ($enddate < $startdate) {
         // End date is greater than start date
         echo '<script>alert("End date must be greater than start date.");history.go(-1);</script>';
         // Add your desired logic here
@@ -34,8 +37,12 @@ if (isset($_POST['submit_campaign'])) {
             'resourceNeed' => $resourceneed,
             'startDate' => $startdate,
             'endDate' => $enddate,
+            'targetAudience' => $_POST['target_audience'] ?? '',
+            'objectives' => $_POST['objectives'] ?? '',
+            'keyPerformanceIndicator' => $_POST['key_performance_indicator'] ?? '',
             'campaignStatus' => 'open'
         );
+
 
         $data = json_encode($data_array);
 
@@ -174,8 +181,8 @@ if (isset($_POST['submit_campaign'])) {
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Zone/Area</label>
-                        <select class="custom-select2 form-control" name="zone" id="zone"
-                                style="width: 100%; height: 38px" autocomplete="off">
+                        <select class="custom-select2 form-control" name="zone_area" id="zone_area"
+                                style="width: 100%; height: 38px">
                             <option value="">Select Zone</option>
                             <?php
                             $zones = zones();
@@ -187,13 +194,13 @@ if (isset($_POST['submit_campaign'])) {
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Sector</label>
-
                         <select class="custom-select2 form-control" name="sector" id="sector"
-                                style="width: 100%; height: 38px" autocomplete="off" required="required">
+                                style="width: 100%; height: 38px" required>
                             <option value="">Select Sector</option>
                             <?php
                             $bsn_sector = bsn_sector();
@@ -207,51 +214,66 @@ if (isset($_POST['submit_campaign'])) {
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Sub-sector</label>
-                        <input type="text" class="form-control" name="subsector" id="subsector">
+                        <input type="text" class="form-control" name="sub_sector" id="sub_sector">
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
-                        <label>Value Chain(if applicable)</label>
+                        <label>Value Chain (if applicable)</label>
                         <input type="text" class="form-control" name="value_chain" id="value_chain">
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
-                        <label>Specify Location/(Venue)</label>
+                        <label>Venue</label>
                         <input type="text" class="form-control" name="venue" id="venue">
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Start Date</label>
-                        <input
-                                type="text"
-                                class="form-control date-picker"
-                                placeholder="Select Date"
-                                id="start_date"
-                                name="start_date"
-                        />
+                        <input type="text" class="form-control date-picker" placeholder="Select Date" id="start_date"
+                               name="start_date">
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>End Date</label>
-                        <input
-                                type="text"
-                                class="form-control date-picker"
-                                placeholder="Select Date"
-                                id="end_date"
-                                name="end_date"
-                        />
+                        <input type="text" class="form-control date-picker" placeholder="Select Date" id="end_date"
+                               name="end_date">
                     </div>
                 </div>
             </div>
+
             <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Target Audience</label>
+                        <input type="text" class="form-control" name="target_audience" id="target_audience">
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Objectives</label>
+                        <input type="text" class="form-control" name="objectives" id="objectives">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Key Performance Indicator</label>
+                        <input type="text" class="form-control" name="key_performance_indicator"
+                               id="key_performance_indicator">
+                    </div>
+                </div>
                 <div class="col-md-6 col-sm-12">
                     <div class="form-group">
                         <label>Resource Need</label>
@@ -260,29 +282,28 @@ if (isset($_POST['submit_campaign'])) {
                 </div>
             </div>
 
-            <div class="col-md-6 col-sm-12">
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <label>Campaign Status</label>
+                        <select class="custom-select2 form-control" name="campaign_status" id="campaign_status"
+                                style="width: 100%; height: 38px" required>
+                            <option value="">Select Status</option>
+                            <option value="Planned">Planned</option>
+                            <option value="Ongoing">Ongoing</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
 
-                <?php
-                //                if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                //                    $start_date = $_POST["start_date"];
-                //                    $end_date = $_POST["end_date"];
-                //
-                //                    if ($end_date > $start_date) {
-                //                        // End date is greater than start date
-                //                        echo "End date is greater than start date.";
-                //                        // Add your desired logic here
-                //                    } else {
-                //                        // End date is not greater than start date
-                //                        echo "End date must be greater than start date.";
-                //                        // Add your desired logic here
-                //                    }
-                //                }
-                ?>
+            <div class="col-md-6 col-sm-12">
                 <div class="form-group">
                     <button type="submit" class="btn btn-danger" value="Submit" name="submit_campaign">Submit</button>
                 </div>
             </div>
         </form>
+
 
     </div>
 </div>
